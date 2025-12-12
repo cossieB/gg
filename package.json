@@ -1,0 +1,37 @@
+{
+  "name": "gg",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && tsc --noEmit",
+    "preview": "vite preview",
+    "start": "pnpx srvx --prod -s ../client dist/server/server.js",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@tanstack/solid-query": "^5.90.9",
+    "@tanstack/solid-query-devtools": "^5.90.0",
+    "@tanstack/solid-router": "^1.141.1",
+    "@tanstack/solid-router-devtools": "^1.141.1",
+    "@tanstack/solid-router-ssr-query": "^1.141.1",
+    "@tanstack/solid-start": "^1.141.1",
+    "drizzle-orm": "^1.0.0-beta.2-b782ae1",
+    "lucide-solid": "^0.561.0",
+    "pg": "^8.16.3",
+    "redaxios": "^0.5.1",
+    "solid-js": "^1.9.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "drizzle-kit": "^1.0.0-beta.2-b782ae1",
+    "postcss": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.2",
+    "vite": "^7.1.7",
+    "vite-plugin-solid": "^2.11.10",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.0.15"
+  }
+}

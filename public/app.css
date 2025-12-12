@@ -1,0 +1,43 @@
+:root {
+  font-size: clamp(12px, calc(12px + 1vw), 16px);
+  --bg-clr: light-dark(whitesmoke, #121212);
+  --txt-clr: light-dark(#333, #f1f1f1);
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  margin: 0;
+  background-color: var(--bg-clr);
+  color: var(--txt-clr);
+
+}
+
+a {
+  text-decoration: none;
+  color: unset;
+
+  &:visited {
+    color: unset;
+  }
+}
+
+a[href^="http"]:not([href*="gg.cossie.dev"])::after {
+  content: "↗"; 
+  margin-inline-start: 0.2rem; 
+  color: initial;
+}
+
+button {
+  background: none;
+  border: none;
+}
+
+@media (min-width: 480px) {
+  h1 {
+    max-width: none;
+  }
+
+  p {
+    max-width: none;
+  }
+}
