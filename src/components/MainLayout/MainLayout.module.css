@@ -56,8 +56,15 @@
     }
 }
 
+.mid {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .main {
     padding: 0.5rem;
+    height: 100%;
     @media (width >=768px) {
         transition: margin-left 200ms ease;
         margin-left: var(--nav-size);
@@ -119,7 +126,7 @@
         margin-left: auto;
         margin-right: auto;
         width: 70%;
-        max-width: 600px;
+        max-width: 400px;
         > button {
             background-color: light-dark(gray, #ffffff14);
             width: var(--icon-width);

@@ -13,7 +13,7 @@ export function MainLayout(props: { children: JSXElement }) {
         <div id="gl" class={styles.root} classList={{ [styles.navOpen]: showNav() }}>
 
             <Nav toggleNav={toggleNav} />
-            <section>
+            <section class={styles.mid}>
                 <SearchBar />
                 <main class={styles.main}>
                     {props.children}

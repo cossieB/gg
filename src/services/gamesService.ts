@@ -5,8 +5,7 @@ import * as gamesRepository from "~/repositories/gamesRepository";
 export const getGamesFn = createServerFn().handler(() => gamesRepository.findAll())
 
 export const getGameFn = createServerFn()
-    .inputValidator(param => {
-        const gameId = Number(param)
+    .inputValidator((gameId: number) => {
         if (Number.isNaN(gameId) || gameId < 1) throw notFound()
         return gameId
     })
