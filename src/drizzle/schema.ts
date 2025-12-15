@@ -4,7 +4,7 @@ import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, pgView 
 export const developers = pgTable("developers", {
     developerId: integer("developer_id").primaryKey().generatedAlwaysAsIdentity(),
     name: varchar("name").notNull(),
-    logo: text("logo"),
+    logo: text("logo").notNull(),
     location: varchar("location"),
     summary: text("summary").notNull().default(""),
     country: varchar("country"),
@@ -15,7 +15,7 @@ export const developers = pgTable("developers", {
 export const publishers = pgTable("publishers", {
     publisherId: integer("publisher_id").primaryKey().generatedAlwaysAsIdentity(),
     name: varchar("name").notNull(),
-    logo: text("logo"),
+    logo: text("logo").notNull(),
     headquarters: varchar("headquarters"),
     summary: text("summary").notNull().default(""),
     country: varchar("country"),
@@ -40,7 +40,7 @@ export const games = pgTable("games", {
 export const platforms = pgTable("platforms", {
     platformId: integer("platform_id").primaryKey().generatedAlwaysAsIdentity(),
     name: varchar("name").notNull(),
-    logo: text("logo"),
+    logo: text("logo").notNull(),
     releaseDate: timestamp("release_date", {mode: "string", withTimezone: true}),
     summary: text("summary").notNull().default(""),
     dateAdded: timestamp("date_added", {mode: "string", withTimezone: true}).notNull().defaultNow(),

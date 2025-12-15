@@ -1,7 +1,6 @@
-import { and, eq, getColumns, SQL, sql } from "drizzle-orm";
+import { and, eq, getColumns, inArray, SQL, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
-import { actors, developersView, gameActors, gamePlatforms, gamesView, gameTags, platforms, publishersView } from "~/drizzle/schema";
-import { sleep } from "~/lib/sleep";
+import { actors, developersView, gameActors, gamePlatforms, games, gamesView, gameTags, platforms, publishersView } from "~/drizzle/schema";
 import type { ActorView, PlatformView } from "~/models";
 
 export async function findAll() {
@@ -19,11 +18,24 @@ export async function findById(gameId: number) {
 }
 
 export async function findByDeveloper(developerId: number) {
-    return gameUtil({filters: [eq(gamesView.developerId, developerId)]})
+    return gameUtil({ filters: [eq(gamesView.developerId, developerId)] })
 }
 
 export async function findByPublisher(publisherId: number) {
-    return gameUtil({filters: [eq(gamesView.publisherId, publisherId)]})
+    return gameUtil({ filters: [eq(gamesView.publisherId, publisherId)] })
+}
+
+export async function findByActor(actorId: number) {
+    return gameUtil({
+        filters: [
+            inArray(
+                gamesView.gameId,
+                db
+                    .select({ gameId: gameActors.gameId })
+                    .from(gameActors)
+                    .where(eq(gameActors.actorId, actorId))
+            )]
+    })
 }
 
 function gameUtil(obj?: { filters?: SQL[] }) {
@@ -77,7 +89,7 @@ function gameUtil(obj?: { filters?: SQL[] }) {
             developer: { ...getColumns(developersView) },
             tags: sql<string[]>`COALESCE(${tagQuery.tags}, '{}')`,
             platforms: sql<PlatformView[]>`COALESCE(${platformQuery.platformArr}, '{}')`,
-            actors: sql<(ActorView & {character: string})[]>`COALESCE(${actorQuery.actorArr}, '{}')`
+            actors: sql<(ActorView & { character: string })[]>`COALESCE(${actorQuery.actorArr}, '{}')`
         })
         .from(gamesView)
         .innerJoin(developersView, eq(gamesView.developerId, developersView.developerId))

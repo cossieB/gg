@@ -28,3 +28,10 @@ export const getGamesByPublisherFn = createServerFn()
         if (data < 1) return [];
         return gamesRepository.findByPublisher(data)
     })
+
+export const getGamesByActorFn = createServerFn()
+    .inputValidator((id: number) => id)
+    .handler(async ({data}) => {
+        if (data < 1) return []
+        return gamesRepository.findByActor(data)
+    })
