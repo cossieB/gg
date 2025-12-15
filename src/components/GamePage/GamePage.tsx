@@ -3,6 +3,8 @@ import styles from "./GamePage.module.css"
 import { LogoLink } from "../LogoLink/LogoLink"
 import { For, Show } from "solid-js"
 import { YouTubeIframe } from "../YoutubeIframe"
+import { Link } from "@tanstack/solid-router"
+import { PhotoCardGrid, PhotoCardLink } from "../CardLink/PhotoCardLink"
 
 
 type Props = {
@@ -60,17 +62,39 @@ export function GamePage(props: Props) {
                             {tag =>
                                 <div>
                                     {tag}
+                                    <Link to="/games/tags/$tag" params={{ tag }} />
                                 </div>
                             }
                         </For>
                     </div>
                 </div>
-
                 <Show when={!!props.game.trailer}>
                     <div class={styles.iframe}>
-
                         <YouTubeIframe link={props.game.trailer!} />
                     </div>
+                </Show>
+                <Show when={props.game.actors.length > 0}>
+                    <PhotoCardGrid
+                        arr={props.game.actors}
+                        getLabel={actor => actor.name}
+                        getPic={actor => actor.photo ?? ""}
+                        to="/actors/$actorId"
+                        getParam={actor => ({actorId: actor.actorId})}
+                    />
+                    {/* <div class={styles.actors}>
+                        <For each={props.game.actors}>
+                            {actor =>
+                                <PhotoCardLink
+                                    label={actor.name}
+                                    picture={actor.photo ?? ""}
+                                    to="/actors/$actorId"
+                                    params={{
+                                        actorId: actor.actorId
+                                    }}
+                                />
+                            }
+                        </For>
+                    </div> */}
                 </Show>
             </div>
         </div>

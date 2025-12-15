@@ -1,3 +1,12 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.25rem;
+
+    @media (width >=768px) {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
 
 .card {
     position: relative;
@@ -29,12 +38,6 @@
     }
 }
 
-.a {
-    position: absolute;
-    display: inherit;
-    inset: 0;
-}
-
 .imgWrapper {
     height: 100%;
     width: 100%;
@@ -46,4 +49,10 @@
         object-fit: cover;
         transition: scale ease 250ms;
     }
+}
+
+.a {
+    position: absolute;
+    display: inherit;
+    inset: 0;
 }
