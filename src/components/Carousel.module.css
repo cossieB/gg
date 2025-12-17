@@ -1,6 +1,6 @@
 .carousel {
     position: relative;
-    overflow: hidden;   
+    overflow: hidden;
     display: flex;
     gap: 0.5rem;
     --idx: 0;
@@ -17,7 +17,7 @@
         overflow: hidden;
         box-shadow: 0 0 10px 1px black;
     }
-    
+
     @media (width > 1024px) {
         >div {
             width: 50%;
@@ -31,7 +31,7 @@
     height: 2.5rem;
     width: 2.5rem;
     border-radius: 50%;
-    background-color: hsla(0, 0%, 0%, 0.3);
+    background-color: hsl(300 100% 50% / 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -40,7 +40,7 @@
     translate: 0 -50%;
 
     &:hover {
-        background-color: hsla(0, 0%, 0%, 1);
+        background-color: hsl(300 100% 50% / 1);
     }
 
     &:last-of-type {

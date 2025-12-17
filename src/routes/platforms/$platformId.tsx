@@ -20,6 +20,9 @@ export const Route = createFileRoute('/platforms/$platformId')({
             queryFn: () => getPlatformFn({ data: platformId })
         })
     },
+    head: ({ loaderData }) => ({
+        meta: loaderData ? [{ title: loaderData.name + " :: GG" }] : undefined,
+    }),
     notFoundComponent: () => <NotFound message="These Aren't The Platforms You're Looking For" />
 })
 

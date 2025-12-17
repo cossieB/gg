@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 0 10px black;
+    /* box-shadow: 0 0 10px black; */
 
     &:hover {
         background-color: lavender;

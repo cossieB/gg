@@ -1,10 +1,10 @@
 :root {
   font-size: clamp(12px, calc(12px + 1vw), 16px);
-  --bg-clr: light-dark(whitesmoke, #121212);
+  --bg-clr: light-dark(#eee, #121212);
   --txt-clr: light-dark(#333, #f1f1f1);
   --neon-pink: #F0F;
   --neon-green: #00ff7f;
-  --content-bg: light-dark(hsl(0, 2%, 90%), hsl(0, 1%, 12%));
+  --content-bg: light-dark(rgb(230, 229, 229), hsl(0, 1%, 12%));
   --gray1: light-dark(hsl(0, 2%, 90%), hsl(0, 2%, 17%));
 }
 
@@ -36,7 +36,6 @@ a {
 }
 
 .paras {
-  box-shadow: 0 0 10px black;
   padding: 0.25rem 1rem;
   background-color: var(--content-bg);
 }

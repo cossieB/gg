@@ -18,7 +18,10 @@ export const Route = createFileRoute('/actors/$actorId')({
             queryKey: ["actors", actorId],
             queryFn: () => getActorFn({ data: actorId })
         })
-    }
+    },
+    head: ({ loaderData }) => ({
+        meta: loaderData ? [{ title: loaderData.name + " :: GG" }] : undefined,
+    }),
 })
 
 function RouteComponent() {

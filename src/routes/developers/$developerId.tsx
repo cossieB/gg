@@ -20,6 +20,9 @@ export const Route = createFileRoute('/developers/$developerId')({
             queryFn: () => getDeveloperFn({ data: developerId })
         })
     },
+    head: ({ loaderData }) => ({
+        meta: loaderData ? [{ title: loaderData.name + " :: GG" }] : undefined,
+    }),
     notFoundComponent: () => <NotFound message="These Aren't The Devs You're Looking For" />
 })
 

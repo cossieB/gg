@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/solid-query'
 import { createFileRoute } from '@tanstack/solid-router'
 import { createEffect, Suspense } from 'solid-js'
-import { Carousel } from '~/components/Carousel'
 import { GamePage } from '~/components/GamePage/GamePage'
 import { NotFound } from '~/components/NotFound'
 import { getGameFn } from '~/services/gamesService'
@@ -20,7 +19,7 @@ export const Route = createFileRoute('/games/$gameId')({
         })
     },
     head: ({ loaderData }) => ({
-        meta: loaderData ? [{ title: loaderData.title }] : undefined,
+        meta: loaderData ? [{ title: loaderData.title + " :: GG" }] : undefined,
     }),
     notFoundComponent: () => <NotFound message="These Aren't The Games You're Looking For" />
 })

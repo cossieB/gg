@@ -11,7 +11,10 @@ export const Route = createFileRoute('/games/')({
             queryKey: ["games"],
             queryFn: () => getGamesFn()
         })
-    }
+    },
+    head: () => ({
+        meta: [{ title: "Games :: GG" }],
+    }),
 })
 
 function RouteComponent() {

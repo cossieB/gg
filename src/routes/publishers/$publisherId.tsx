@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/solid-query'
 import { createFileRoute } from '@tanstack/solid-router'
 import { Suspense } from 'solid-js'
-import { PhotoCardGrid, PhotoCardGridSkeleton } from '~/components/CardLink/PhotoCardLink'
+import { PhotoCardGrid } from '~/components/CardLink/PhotoCardLink'
 import { CompanyPage } from '~/components/CompanyPage/CompanyPage'
 import { NotFound } from '~/components/NotFound'
 import { getGamesByPublisherFn } from '~/services/gamesService'
@@ -16,10 +16,13 @@ export const Route = createFileRoute('/publishers/$publisherId')({
     },
     loader: async ({ context, params: { publisherId } }) => {
         return await context.queryClient.ensureQueryData({
-            queryKey: ["publisher", publisherId],
+            queryKey: ["publishers", publisherId],
             queryFn: () => getPublisherFn({ data: publisherId })
         })
     },
+    head: ({ loaderData }) => ({
+        meta: loaderData ? [{ title: loaderData.name + " :: GG" }] : undefined,
+    }),
     notFoundComponent: () => <NotFound message="These Aren't The Pubs You're Looking For" />
 })
 

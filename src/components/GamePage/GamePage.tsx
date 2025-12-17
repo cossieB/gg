@@ -27,7 +27,9 @@ export function GamePage(props: Props) {
             </div>
             <div class={styles.body}>
                 <div class={styles.columns}>
-                    <div class={`${styles.main} paras cutout`} innerHTML={props.game.summary} />
+                    <div class={`${styles.main} cutout-wrapper`}>
+                        <div class={`paras cutout`} innerHTML={props.game.summary} />
+                    </div>
                     <LogoLink
                         href="developer"
                         item={{
