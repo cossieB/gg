@@ -9,7 +9,7 @@ export default function clickOutside(el: Element, accessor: Function) {
 
 declare module "solid-js" {
     namespace JSX {
-      interface Directives {  
+      interface DirectiveFunctions {  
         clickOutside(el: Element, accessor: Function): void
       }
     }

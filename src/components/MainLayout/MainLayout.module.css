@@ -177,9 +177,6 @@
         font-weight: bold;
         margin-left: 0.5rem;
         text-decoration: underline;
-        &::after {
-            content: "dkd";
-            text-decoration: none;
-        }
+
     }
 }

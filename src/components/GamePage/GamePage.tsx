@@ -88,7 +88,7 @@ export function GamePage(props: Props) {
                 </Show>
                 <Show when={props.game.images.length > 1}>
                     <h2>Screenshots</h2>
-                <Carousel images={props.game.images} showNextBtn showPrevBtn />
+                    <Carousel images={props.game.images} showNextBtn showPrevBtn />
                 </Show>
             </div>
         </div>
