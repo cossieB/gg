@@ -1,7 +1,7 @@
 import { and, eq, getColumns, inArray, SQL, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
 import { actors, developersView, gameActors, gamePlatforms, games, gamesView, gameTags, platforms, publishersView } from "~/drizzle/schema/schema";
-import type { ActorView, PlatformView } from "~/models";
+import type { ActorView, PlatformView } from "~/drizzle/models";
 
 export async function findAll() {
     try {

@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/solid-router'
 import { createSignal } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import { Form } from '~/components/Forms/Form'
+import { FormProvider } from '~/components/Forms/FormContext'
 import { Popover } from '~/components/Popover/Popover'
-import { Form } from '~/Forms/Form'
-import { FormProvider } from '~/Forms/FormContext'
+
 import { authClient } from '~/utils/authClient'
 
 export const Route = createFileRoute('/auth/signup')({
@@ -37,7 +38,7 @@ function RouteComponent() {
                             return btn.click()
                         }
                         if (data)
-                            navigate("/profile")
+                            navigate({to: "/profile"})
                     }}
                 >
                     <Form.Input<typeof input>

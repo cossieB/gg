@@ -1,9 +1,8 @@
-import { House, Dice5, BriefcaseBusiness, Code, Menu, UnlockIcon, LockOpenIcon } from "lucide-solid";
+import { House, Dice5, BriefcaseBusiness, Code, Menu, LockOpenIcon } from "lucide-solid";
 import styles from "./MainLayout.module.css"
-import { createEffect, createResource, Show, type JSXElement } from "solid-js";
+import { Show, type JSXElement } from "solid-js";
 import { Link } from "@tanstack/solid-router";
 import { authClient } from "~/utils/authClient";
-import { unwrap } from "solid-js/store";
 
 export function Nav(props: { toggleNav(): void }) {
 

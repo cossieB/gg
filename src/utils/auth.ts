@@ -14,14 +14,12 @@ export const auth = betterAuth({
         },
         additionalFields: {
             role: {
-                fieldName: "role",
                 type: "string",
                 input: false,       
                 required: true,
                 defaultValue: "user"     
             },
             banner: {
-                fieldName: "banner",
                 type: "string",
                 input: true,
                 required: false,
@@ -31,6 +29,13 @@ export const auth = betterAuth({
     },
     emailAndPassword: {
         enabled: true
+    },
+    emailVerification: {
+        sendOnSignUp: true,
+        sendVerificationEmail: async ({user, url, token}) => {
+            console.log(url, "\n", token)
+        },
+        autoSignInAfterVerification: true,
     },
     plugins: [username({
         minUsernameLength: 3,
