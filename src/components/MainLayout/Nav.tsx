@@ -1,4 +1,4 @@
-import { House, Dice5, BriefcaseBusiness, Code, Menu, LockOpenIcon } from "lucide-solid";
+import { BriefcaseBusiness, LockOpenIcon, MenuIcon, CodeIcon, Dice5Icon, HouseIcon } from "lucide-solid";
 import styles from "./MainLayout.module.css"
 import { Show, type JSXElement } from "solid-js";
 import { Link, LinkComponentProps } from "@tanstack/solid-router";
@@ -11,7 +11,7 @@ export function Nav(props: { toggleNav(): void }) {
         <nav class={styles.nav} >
             <div class={styles.topItem}>
                 <button class={styles.toggleBtn} onclick={props.toggleNav}>
-                    <Menu />
+                    <MenuIcon />
                 </button>
                 <aside>
                     GG
@@ -21,17 +21,17 @@ export function Nav(props: { toggleNav(): void }) {
                 <NavItem
                     to="/"
                     label="Home"
-                    icon={<House />}
+                    icon={<HouseIcon />}
                 />
                 <NavItem
                     to="/games"
                     label="Games"
-                    icon={<Dice5 />}
+                    icon={<Dice5Icon />}
                 />
                 <NavItem
                     to="/developers"
                     label="Developers"
-                    icon={<Code />}
+                    icon={<CodeIcon />}
                 />
                 <NavItem
                     to="/publishers"

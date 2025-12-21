@@ -1,5 +1,5 @@
-import { Link, LinkComponentProps } from "@tanstack/solid-router"
-import { createSignal, For, splitProps } from "solid-js"
+import { Link, LinkComponentProps, useLocation } from "@tanstack/solid-router"
+import { createEffect, createSignal, For, splitProps } from "solid-js"
 import { Require } from "~/lib/utilityTypes"
 import styles from "./NavTabs.module.css"
 
@@ -15,7 +15,7 @@ export function NavTabs(props: Props) {
                 {(tab, i) =>
                     <Tab
                         {...tab}
-                        onclick={() => setI(i())}
+                        setIdx={() => setI(i())}
                     />
                 }
             </For>
@@ -23,10 +23,17 @@ export function NavTabs(props: Props) {
     )
 }
 
-function Tab(props: Props["tabs"][number] & {onclick(): void}) {
-    const [div, linkProps] = splitProps(props, ['label', 'onclick'])
+function Tab(props: Props["tabs"][number] & {setIdx(): void}) {
+    const [div, linkProps] = splitProps(props, ['label', 'setIdx'])
+    const location = useLocation()
+    
+    createEffect(() => {
+        if (location().pathname.toLowerCase().endsWith(props.label.toLowerCase()))
+            div.setIdx()
+    })
+
     return (
-        <div class={styles.tab} onclick={div.onclick}>
+        <div class={`${styles.tab} cutout`}>
             {div.label}
             <Link 
                 {...linkProps} 

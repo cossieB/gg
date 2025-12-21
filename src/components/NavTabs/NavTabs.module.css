@@ -1,14 +1,15 @@
 .nav {
     display: flex;
-    height: 2.5rem;    
+    height: 2.5rem;
     --count: 1;
     --i: 0;
     position: relative;
 
+
     &::after {
         content: "";
         position: absolute;
-        --width: calc(100% / var(--count)); 
+        --width: calc(100% / var(--count));
         width: var(--width);
         height: 2px;
         background-color: var(--neon-green);
@@ -24,6 +25,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    &:hover {
+        background-color: #1e293b50;
+    }
+
     >a {
         position: absolute;
         inset: 0;

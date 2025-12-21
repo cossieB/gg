@@ -12,20 +12,23 @@
         font-size: small;
         color: hsl(0, 64%, 60%);
     }
-    
+
     button {
         padding: 1rem 2rem;
         background-color: var(--neon-green);
         color: black;
+
         &:disabled {
             background-color: rgba(90, 82, 82, 0.3);
             color: white;
         }
     }
+
     aside {
         font-size: small;
         margin-bottom: 1rem;
     }
+
     h1 {
         margin-bottom: 0.5rem;
     }
@@ -45,6 +48,7 @@
         transform: translateY(-50%);
         transition: 0.3s ease all;
         pointer-events: none;
+        color: gray;
     }
 
     textarea,
@@ -72,5 +76,18 @@
             }
         }
     }
+
+    textarea {
+        min-height: 4lh;
+        resize: none;
+        field-sizing: content;
+    }
 }
 
+.charIndicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--neon-pink);
+
+}

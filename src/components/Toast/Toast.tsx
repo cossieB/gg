@@ -1,4 +1,4 @@
-import { createEffect, For, onCleanup, onMount } from "solid-js"
+import { For, onCleanup, onMount } from "solid-js"
 import { useToastContext } from "~/hooks/useToastContext"
 import { type TToast } from "./ToastProvider"
 import styles from "./Toast.module.css"
@@ -8,7 +8,7 @@ import { XIcon } from "lucide-solid"
 
 export function ToastContainer() {
     const { toasts } = useToastContext()
-
+    
     return (
         <For each={toasts}>
             {(toast, i) =>
@@ -20,8 +20,6 @@ export function ToastContainer() {
         </For>
     )
 }
-
-
 
 export function Toast(props: { toast: TToast, i: number }) {
     let ref!: HTMLDivElement

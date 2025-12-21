@@ -1,8 +1,8 @@
-import { createContext, createMemo, createSignal, For, useContext, type JSXElement } from "solid-js";
+import { createMemo, type JSXElement } from "solid-js";
 import styles from "./Forms.module.css"
 import { FormInput } from "./FormInput";
-import type z from "zod";
 import { useFormContext } from "~/hooks/useFormContext";
+import { Formtextarea } from "./FormTextarea";
 
 type Props = {
     children: JSXElement;
@@ -26,3 +26,4 @@ export function Form(props: Props) {
 }
 
 Form.Input = FormInput
+Form.Textarea = Formtextarea

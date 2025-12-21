@@ -3,7 +3,7 @@ import styles from "./MainLayout.module.css"
 import { Nav } from "./Nav";
 import { SearchBar } from "./Searchbar";
 import { ToastContainer } from "../Toast/Toast";
-import { useLocation } from "@tanstack/solid-router";
+import { useLocation, useSearch } from "@tanstack/solid-router";
 
 export function MainLayout(props: { children: JSXElement }) {
     const [showNav, setShowNav] = createSignal(false)

@@ -1,0 +1,17 @@
+.uploadBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: dotted 1px gray;
+
+    label {
+        position: absolute;
+        top: 0;
+        font-size: small;
+    }
+    span {
+        font-size: x-small;
+    }
+}

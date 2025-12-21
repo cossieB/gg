@@ -7,7 +7,7 @@ import titleCase from "~/lib/titleCase"
 type Props<T = any> = ({
     field: string & keyof T
     value: string
-    setter: Setter<string>
+    setter: (val: string) => void
     label?: string
     validator?: (newVal: string) => string[]
     onErr?: (err: string) => void
