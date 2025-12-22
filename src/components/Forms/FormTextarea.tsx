@@ -10,15 +10,19 @@ type Props<T = any> = ({
 }) & ComponentProps<"textarea">
 
 export function Formtextarea<T>(props: Props<T>) {
-    const [p, rest] = splitProps(props, ["value", "setter", "label"])
+    const [p, rest] = splitProps(props, ["setter", "label"])
     const max = Number(props.maxLength) ?? Number.POSITIVE_INFINITY
+
     return (
         <div class={styles.formControl}>
             <textarea 
                 {...rest}
+                value={props.value}
                 placeholder=" "
                 oninput={e => props.setter(e.currentTarget.value)}
-            />
+            >
+                {props.value}
+                </textarea>
             <label> {p.label ?? titleCase(props.field)} </label>
             <Show when={max != Number.POSITIVE_INFINITY}>
                 <div style={{width: props.value.length / max * 100 + "%"}} class={styles.charIndicator} />

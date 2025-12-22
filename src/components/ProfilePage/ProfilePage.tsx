@@ -1,43 +1,56 @@
 import { createStore } from "solid-js/store";
-import { getProfileFn } from "~/services/authService";
+import { getLoggedInUser } from "~/services/userService";
 import { Form } from "../Forms/Form";
 import { FormProvider } from "../Forms/FormContext";
 import styles from "./ProfilePage.module.css"
 import { ConfirmPopover } from "../Popover/Popover";
-import { authClient } from "~/utils/authClient";
 import { useToastContext } from "~/hooks/useToastContext";
-import { useNavigate } from "@tanstack/solid-router";
 import { UploadBox } from "../UploadBox/UploadBox";
+import { objectDifference } from "~/lib/objectDifference";
+import { updateCurrentUser } from "~/services/userService";
+import { useServerFn } from "@tanstack/solid-start";
+import { useMutation, useQueryClient } from "@tanstack/solid-query";
+import { useLogout } from "~/hooks/useLogout";
 
-export function Profile(props: { user: Awaited<ReturnType<typeof getProfileFn>> }) {
+export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser>> }) {
+    const action = useServerFn(updateCurrentUser);
     const { addToast } = useToastContext()
-    const navigate = useNavigate()
-    async function logout() {
-        try {
-            await authClient.signOut();
-            navigate({ to: "/" })
-        }
-        catch (error) {
-            console.error(error)
-            addToast({
-                text: "Could not log you out. Please try again later.",
-                type: "error"
-            })
-        }
+    const queryClient = useQueryClient()
+    const logout = useLogout()
+
+    const mutation = useMutation(() => ({
+        mutationFn: action,
+        onSuccess: () => {
+            addToast({ text: "Success", type: "info" })
+            queryClient.setQueryData(["users", user.userId], user)
+            queryClient.setQueryData(["you"], user)
+        },
+        onError(error, variables, onMutateResult, context) {console.log(error)
+            addToast({ text: error.message, type: "error" })
+        },
+    }))
+
+    const [user, setUser] = createStore<typeof props.user>(JSON.parse(JSON.stringify(props.user)))
+
+    async function handleSubmit(e: SubmitEvent) {
+        e.preventDefault();
+        const obj = objectDifference(user, props.user);
+        if (Object.keys(obj).length == 0) return;
+        const res = await mutation.mutateAsync({ data: obj })
+ 
     }
-    const [user, setUser] = createStore(props.user)
 
     return (
         <div class={`${styles.profile} flexCenter`}>
             <FormProvider>
-                <Form onSubmit={async () => { }} disabled>
+                <Form onSubmit={handleSubmit} isPending={mutation.isPending}>
                     <Form.Input<typeof user>
-                        field="name"
+                        field="displayName"
                         label='Display Name'
-                        setter={val => setUser({ name: val })}
-                        value={user.name}
+                        setter={val => setUser({ displayName: val })}
+                        value={user.displayName}
+                        required
                     />
-
                     <div class={styles.images}>
                         <UploadBox
                             label="Avatar"

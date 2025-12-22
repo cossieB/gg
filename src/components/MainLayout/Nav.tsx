@@ -77,7 +77,7 @@ function UserComponent() {
                 <NavItem
                     to="/settings/profile"
                     icon={<img src={user().image ?? "/favicon.ico"} />}
-                    label={user().name}
+                    label={user().displayUsername!}
                 />
             }
         </Show>

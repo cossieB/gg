@@ -79,9 +79,9 @@ export const Route = createRootRouteWithContext<{
     validateSearch: z.object({
         toasts: z.array(z.object({
             text: z.string(),
-            type: z.enum(["error", "info", "warning"]),
+            type: z.enum(["error", "info", "warning"]).catch("info"),
             autoFade: z.boolean().optional().default(true)
-        })).optional()
+        })).optional().catch(undefined)
     })
 })
 

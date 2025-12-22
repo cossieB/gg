@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/solid-router'
 import { createSignal } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import z from 'zod'
 import { Form } from '~/components/Forms/Form'
 import { FormProvider } from '~/components/Forms/FormContext'
 import { useToastContext } from '~/hooks/useToastContext'
@@ -8,9 +9,13 @@ import { authClient } from '~/utils/authClient'
 
 export const Route = createFileRoute('/auth/signin')({
     component: RouteComponent,
+    validateSearch: z.object({
+        redirect: z.string().optional()
+    }),
 })
 
 function RouteComponent() {
+    const search = Route.useSearch()
     const navigate = useNavigate()
     const [isSubmitting, setIsSubmitting] = createSignal(false)
     const [input, setInput] = createStore({
@@ -18,7 +23,7 @@ function RouteComponent() {
         password: ""
     })
     const { addToast } = useToastContext()
-    
+
     async function handleSubmit(e: SubmitEvent) {
         e.preventDefault();
         setIsSubmitting(true)
@@ -34,7 +39,7 @@ function RouteComponent() {
                 setIsSubmitting(false)
             },
             onSuccess() {
-                navigate({ to: "/settings/profile" })
+                navigate({ to: search()?.redirect ?? "/settings/profile" })
             }
         })
     }
@@ -42,7 +47,11 @@ function RouteComponent() {
     return (
         <div class='page flexCenter'>
             <FormProvider>
-                <Form disabled={!input.username || !input.password || isSubmitting()} onSubmit={handleSubmit}>
+                <Form
+                    isPending={isSubmitting()}
+                    disabled={!input.username || !input.password}
+                    onSubmit={handleSubmit}
+                >
                     <h1>Login</h1>
                     <aside>
                         Don't have an account? <Link to='/auth/signup'>Click here to register</Link>

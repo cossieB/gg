@@ -10,14 +10,18 @@ export const checkSessionFn = createIsomorphicFn().server(async () => {
     const session = await auth.api.getSession({
         headers
     })
-    if (session) throw redirect({ to: "/settings/profile", search: {
-        toasts: [{text: "Already logged in", type: "info", autoFade: true}]
-    } })
+    if (session) throw redirect({
+        to: "/settings/profile", search: {
+            toasts: [{ text: "Already logged in", type: "info", autoFade: true }]
+        }
+    })
 }).client(async () => {
     const session = authClient.useSession()
-    if (session()?.data?.session) throw redirect({ to: "/settings/profile", search: {
-        toasts: [{text: "Already logged in", type: "info", autoFade: true}]
-    } })
+    if (session()?.data?.session) throw redirect({
+        to: "/settings/profile", search: {
+            toasts: [{ text: "Already logged in", type: "info", autoFade: true }]
+        }
+    })
 })
 
 export const getSessionFn = createIsomorphicFn().server(async () => {
@@ -49,13 +53,40 @@ export const getProfileFn = createServerFn().handler(async () => {
                 token: session.session.token
             }
         })
-        throw redirect({to: "/auth/signin", search: {
-            toasts: [{
-                text: "Please login again",
-                type: "warning",
-                autoFade: false
-            }]
-        }})
+        throw redirect({
+            to: "/auth/signin", search: {
+                toasts: [{
+                    text: "Please login again",
+                    type: "warning",
+                    autoFade: false
+                }]
+            }
+        })
     }
     return user
 })
+
+export const getCurrentUserId = createServerFn()
+    .handler(async () => {
+        const headers = getRequestHeaders();
+        const session = await auth.api.getSession({
+            headers
+        })
+        if (!session) return null
+        return session.user.id
+    })
+
+export const revokeSession = createServerFn()
+    .handler(async () => {
+        const headers = getRequestHeaders();
+        const session = await auth.api.getSession({
+            headers
+        })
+        if (session)
+            await auth.api.revokeSession({
+                headers,
+                body: {
+                    token: session.session.token
+                }
+            })
+    })

@@ -24,32 +24,35 @@ function RouteComponent() {
     const navigate = useNavigate()
     const emptyInput = () => Object.values(input).some(val => !val)
 
+    async function handleSubmit(e: SubmitEvent) {
+        e.preventDefault()
+        setSubmitting(true)
+        await authClient.signUp.email({
+            ...input,
+            name: input.username
+        }, {
+            onError(context) {
+                addToast({ type: "error", text: context.error.message })
+                setSubmitting(false)
+            },
+            onSuccess() {
+                addToast({
+                    type: "info",
+                    text: "Successfully created your account. Click the link in your email to verify your account",
+                    autoFades: false
+                })
+                navigate({ to: "/settings/profile" })
+            }
+        })
+    }
+
     return (
         <div class="page flexCenter">
             <FormProvider>
                 <Form
-                    disabled={emptyInput() || submitting()}
-                    onSubmit={async e => {
-                        e.preventDefault()
-                        setSubmitting(true)
-                        await authClient.signUp.email({
-                            ...input,
-                            name: input.username
-                        }, {
-                            onError(context) {
-                                addToast({ type: "error", text: context.error.message })
-                                setSubmitting(false)
-                            },
-                            onSuccess() {
-                                addToast({
-                                    type: "info",
-                                    text: "Successfully created your account. Click the link in your email to verify your account",
-                                    autoFades: false
-                                })
-                                navigate({ to: "/settings/profile" })
-                            }
-                        })
-                    }}
+                    disabled={emptyInput()}
+                    onSubmit={handleSubmit}
+                    isPending={submitting()}
                 >
                     <h1>Register</h1>
                     <aside>
