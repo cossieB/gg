@@ -47,11 +47,11 @@ export const updateCurrentUser = createServerFn({ method: "POST" })
             bio: z.string().max(255).optional(),
             image: z.instanceof(File)
                 .refine(file => file.type.startsWith("image/"))
-                .refine(file => file.size < 2500000, "File too large")
+                .refine(file => file.size < 2_500_000, "File too large")
                 .optional(),
             banner: z.instanceof(File)
                 .refine(file => file.type.startsWith("image/"))
-                .refine(file => file.size < 2500000, "File too large")
+                .refine(file => file.size < 2_500_000, "File too large")
                 .optional(),
             dob: z.iso.date().nullish(),
             location: z.string().max(100).nullish()
@@ -60,8 +60,8 @@ export const updateCurrentUser = createServerFn({ method: "POST" })
         const parsed = UserUpdateSchema.parse(obj)
         if (Object.keys(parsed).length === 0) throw Response.json({ error: "Nothing to update" }, { status: 400 })
 
-        const prom1 = parsed.image && uploadService.uploadFromServer(parsed.image, `users/${user.id}/avatars/`)
-        const prom2 = parsed.banner && uploadService.uploadFromServer(parsed.banner, `users/${user.id}/banners/`)
+        const prom1 = parsed.image && uploadService.uploadFromServer(parsed.image, "users", user.id, "avatars");
+        const prom2 = parsed.banner && uploadService.uploadFromServer(parsed.banner, "users", user.id, "banners");
 
         try {
             const [avatar, banner] = await Promise.all([prom1, prom2])

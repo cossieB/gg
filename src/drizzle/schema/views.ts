@@ -12,7 +12,6 @@ export const developersView = pgView("developers_view").as(qb => {
     return qb.select({...rest}).from(developers)
 })
 
-
 export const publishersView = pgView("publishers_view").as(qb => {
     const { dateAdded, dateModified, ...rest } = getColumns(publishers)
     return qb.select({...rest}).from(publishers)

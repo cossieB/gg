@@ -1,7 +1,7 @@
 import { and, eq, getColumns, inArray, SQL, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
 import type { ActorView, PlatformView } from "~/drizzle/models";
-import { gameActors, gamePlatforms, gameGenres, actors, platforms } from "~/drizzle/schema/schema";
+import { gameActors, gamePlatforms, gameGenres, actors, platforms, media } from "~/drizzle/schema/schema";
 import { gamesView, publishersView, developersView } from "~/drizzle/schema/views";
 
 export async function findAll() {
@@ -104,21 +104,34 @@ function gameUtil(obj?: { filters?: SQL[] }) {
     const tagQuery = db.$with("tq").as(
         db.select({
             gameId: gameGenres.gameId,
-            tags: sql`ARRAY_AGG(game_tags.tag_name ORDER BY game_tags.tag_name)`.as("tags")
+            tags: sql`ARRAY_AGG(game_genres.genre ORDER BY game_genres.genre)`.as("tags")
         })
             .from(gameGenres)
             .groupBy(gameGenres.gameId)
     )
 
+    const mediaQuery = db.$with("mq").as(
+        db.select({
+            gameId: media.gameId,
+            media: sql<{key: string, contentType: string}[]>`JSONB_AGG(JSONB_BUILD_OBJECT(
+                'key', ${media.key},
+                'contentType', ${media.contentType}
+            ))`.as("m_arr")
+        })
+        .from(media)
+        .groupBy(media.gameId)
+    )
+
     const gamesQuery = db
-        .with(actorQuery, platformQuery, tagQuery)
+        .with(actorQuery, platformQuery, tagQuery, mediaQuery)
         .select({
             ...gamesColumns,
             publisher: { ...getColumns(publishersView) },
             developer: { ...getColumns(developersView) },
             tags: sql<string[]>`COALESCE(${tagQuery.tags}, '{}')`,
             platforms: sql<PlatformView[]>`COALESCE(${platformQuery.platformArr}, '{}')`,
-            actors: sql<(ActorView & { character: string })[]>`COALESCE(${actorQuery.actorArr}, '{}')`
+            actors: sql<(ActorView & { character: string })[]>`COALESCE(${actorQuery.actorArr}, '{}')`,
+            media: sql<{key: string, contentType: string}[]>`COALESCE(${mediaQuery.media}, '{}')`
         })
         .from(gamesView)
         .innerJoin(developersView, eq(gamesView.developerId, developersView.developerId))
@@ -126,6 +139,7 @@ function gameUtil(obj?: { filters?: SQL[] }) {
         .leftJoin(actorQuery, eq(gamesView.gameId, actorQuery.gameId))
         .leftJoin(platformQuery, eq(gamesView.gameId, platformQuery.gameId))
         .leftJoin(tagQuery, eq(gamesView.gameId, tagQuery.gameId))
+        .leftJoin(mediaQuery, eq(gamesView.gameId, mediaQuery.gameId))
         .where(and(...(obj?.filters ?? [])))
 
     return gamesQuery

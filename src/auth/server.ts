@@ -63,6 +63,12 @@ export const auth = betterAuth({
         },
         autoSignInAfterVerification: true,
     },
+    session: {
+        cookieCache: {
+            enabled: true,
+            maxAge: 600
+        }
+    },
     plugins: [username({
         minUsernameLength: 3,
         maxUsernameLength: 15,
@@ -74,7 +80,7 @@ export const auth = betterAuth({
         cookiePrefix: "spectre",
         database: {
             generateId: "uuid"
-        }
+        },
     },
     databaseHooks: {
         user: {
@@ -110,6 +116,7 @@ export const auth = betterAuth({
     },
     rateLimit: {
         enabled: true,
-    }
+    },
+    
 });
 

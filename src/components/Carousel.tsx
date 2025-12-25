@@ -1,22 +1,22 @@
-import { createSignal, For, Show } from "solid-js"
+import { createSignal, For, Match, Show, Switch } from "solid-js"
 import styles from "./Carousel.module.css"
 import { MoveLeftIcon, MoveRightIcon } from "lucide-solid"
 
 type Props = {
     showPrevBtn: boolean
     showNextBtn: boolean
-    images: string[]
+    media: { url: string, contentType: string }[]
 }
 
 export function Carousel(props: Props) {
 
     const [idx, setIdx] = createSignal(0)
     function next() {
-        setIdx(prev => (prev + 1) % props.images.length)
+        setIdx(prev => (prev + 1) % props.media.length)
     }
     function prev() {
         if (idx() == 0)
-            setIdx(props.images.length - 1)
+            setIdx(props.media.length - 1)
         else
             setIdx(p => p - 1)
     }
@@ -27,22 +27,32 @@ export function Carousel(props: Props) {
                 style={{ "--idx": idx() }}
                 classList={{ [styles.carousel]: true }}
             >
-                <For each={props.images}>
-                    {image => <div><img src={image} alt="" /></div>}
+                <For each={props.media}>
+                    {m =>
+                        <div>
+                            <Switch>
+                                <Match when={m.contentType.startsWith("image")}>
+                                    <img src={m.url} alt="" />
+                                </Match>
+                                <Match when={m.contentType.startsWith("video")}>
+                                    <video src={m.url}></video>
+                                </Match>
+                            </Switch>
+                        </div>}
                 </For>
-                <Show when={props.showPrevBtn && props.images.length > 1}>
+                <Show when={props.showPrevBtn && props.media.length > 1}>
                     <button class={styles.navBtns} onclick={prev}>
                         <MoveLeftIcon />
                     </button>
                 </Show>
-                <Show when={props.showNextBtn && props.images.length > 1}>
+                <Show when={props.showNextBtn && props.media.length > 1}>
                     <button class={styles.navBtns} onclick={next}>
                         <MoveRightIcon />
                     </button>
                 </Show>
             </div>
             <div class={styles.notches}>
-                <For each={props.images}>
+                <For each={props.media}>
                     {(_, i) =>
                         <button
                             onclick={() => setIdx(i())}

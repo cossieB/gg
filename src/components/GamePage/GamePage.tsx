@@ -90,9 +90,16 @@ export function GamePage(props: Props) {
                         getParam={actor => ({ actorId: actor.actorId })}
                     />
                 </Show>
-                <Show when={props.game.images.length > 1}>
+                <Show when={props.game.media.length > 0}>
                     <h2>Screenshots</h2>
-                    <Carousel images={props.game.images} showNextBtn showPrevBtn />
+                    <Carousel
+                        media={props.game.media.map(m => ({
+                            contentType: m.contentType,
+                            url: import.meta.env.VITE_STORAGE_DOMAIN + m.key
+                        }))}
+                        showNextBtn
+                        showPrevBtn
+                    />
                 </Show>
             </div>
         </div>

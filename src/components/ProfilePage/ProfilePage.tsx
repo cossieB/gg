@@ -45,7 +45,7 @@ export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser
         const obj = objectDifference(user, props.user);
         if (Object.keys(obj).length == 0) return addToast({ text: "Nothing to update", type: "warning" });
         const fd = new FormData()
-        console.log(files.avatar, files.banner)
+
         files.avatar && fd.append("image", files.avatar)
         files.banner && fd.append("banner", files.banner)
         const res = await mutation.mutateAsync({ 
@@ -56,7 +56,6 @@ export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser
 
     return (
         <div class={`${styles.profile} flexCenter`}>
-            <img src="https://r2.cossie.dev/users/019b4b5c-d7db-7e08-9afb-86af0733445c/avatars/v83849tobz7f1.jpeg" alt="" />
             <FormProvider>
                 <Form onSubmit={handleSubmit} isPending={mutation.isPending}>
                     <Form.Input<typeof user>

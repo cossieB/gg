@@ -34,7 +34,6 @@ export const games = pgTable("games", {
     cover: text("cover").notNull(),
     banner: text("banner").notNull(),
     trailer: text("trailer"),
-    images: text('images').array().notNull().default([]),
     dateAdded: timestamp("date_added", { withTimezone: true }).notNull().defaultNow(),
     dateModified: timestamp("date_modified", { withTimezone: true }),
 });
@@ -129,3 +128,11 @@ export const commentReactions = pgTable("comment_reactions", {
 }, t => [
     primaryKey({ columns: [t.commentId, t.userId] })
 ])
+
+export const media = pgTable("media", {
+    key: text("key").primaryKey(),
+    contentType: varchar("content_type").notNull(),
+    postId: integer("post_id").references(() => posts.postId),
+    gameId: integer("game_id").references(() => games.gameId),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({})
+})
