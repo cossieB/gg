@@ -43,6 +43,6 @@ export const getGamesByPlatformFn = createServerFn()
         return gamesRepository.findByPlatform(data)
     })
 
-export const getGamesByTagFn = createServerFn()
+export const getGamesByGenreFn = createServerFn()
     .inputValidator((tag: string) => tag )
     .handler(async ({data}) => gamesRepository.findByTag(data))

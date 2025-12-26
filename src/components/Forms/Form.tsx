@@ -3,6 +3,8 @@ import styles from "./Forms.module.css"
 import { FormInput } from "./FormInput";
 import { useFormContext } from "~/hooks/useFormContext";
 import { Formtextarea } from "./FormTextarea";
+import { FormSelect } from "./Select";
+import { TagsInput } from "./TagsInput";
 
 type Props = {
     children: JSXElement;
@@ -32,3 +34,5 @@ export function Form(props: Props) {
 
 Form.Input = FormInput
 Form.Textarea = Formtextarea
+Form.FormSelect = FormSelect
+Form.TagsInput = TagsInput

@@ -1,12 +1,12 @@
-import { BriefcaseBusiness, LockOpenIcon, MenuIcon, CodeIcon, Dice5Icon, HouseIcon } from "lucide-solid";
+import { BriefcaseBusiness, LockOpenIcon, MenuIcon, CodeIcon, Dice5Icon, HouseIcon, CirclePlus } from "lucide-solid";
 import styles from "./MainLayout.module.css"
-import { Show, type JSXElement } from "solid-js";
+import { Show, splitProps, type JSXElement } from "solid-js";
 import { Link, LinkComponentProps } from "@tanstack/solid-router";
 import { authClient } from "~/auth/authClient";
 import { Require } from "~/lib/utilityTypes";
 
 export function Nav(props: { toggleNav(): void }) {
-
+    const session = authClient.useSession()
     return (
         <nav class={styles.nav} >
             <div class={styles.topItem}>
@@ -38,6 +38,14 @@ export function Nav(props: { toggleNav(): void }) {
                     label="Publishers"
                     icon={<BriefcaseBusiness />}
                 />
+                <Show when={session().data}>
+                    <NavItem
+                        to="/create"
+                        icon={<CirclePlus />}
+                        label="Create"
+                        style={{color: "var(--neon-pink)"}}
+                    />
+                </Show>
                 <UserComponent />
             </ul>
         </nav>
@@ -47,11 +55,12 @@ export function Nav(props: { toggleNav(): void }) {
 type NavItemProps = {
     label: string
     icon: JSXElement
-} &  Require<LinkComponentProps, 'to'>
+} & Require<LinkComponentProps, 'to'>
 
 function NavItem(props: NavItemProps) {
+    const [_, toProps] = splitProps(props, ["label", "icon"])
     return (
-        <Link to={props.to} activeProps={{ class: styles.active }} >
+        <Link {...toProps} activeProps={{ class: styles.active }} >
             <li class={`${styles.navItem}`}>
                 {props.icon}
                 <span> {props.label} </span>
@@ -62,7 +71,7 @@ function NavItem(props: NavItemProps) {
 
 function UserComponent() {
     const session = authClient.useSession()
-    
+
     return (
         <Show
             when={session().data?.user}

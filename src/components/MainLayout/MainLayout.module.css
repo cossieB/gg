@@ -57,7 +57,7 @@
 
 .main {
     height: 100vh;
-    padding-top: 3rem;
+    padding-top: 3.5rem;
 
     @media (width >=768px) {
         transition: margin-left 200ms ease;

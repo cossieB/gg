@@ -67,8 +67,8 @@ export const genres = pgTable("genres", {
 export const roleType = pgEnum('role_type', ["player character", "major character", "minor character"])
 
 export const gameActors = pgTable("game_actors", {
-    gameId: integer("game_id").notNull().references(() => games.gameId, {onDelete: "cascade"}),
-    actorId: integer("actor_id").notNull().references(() => actors.actorId, {onDelete: "cascade"}),
+    gameId: integer("game_id").notNull().references(() => games.gameId, { onDelete: "cascade" }),
+    actorId: integer("actor_id").notNull().references(() => actors.actorId, { onDelete: "cascade" }),
     character: varchar().notNull(),
     roleType: roleType("role_type").notNull().default("major character")
 }, (table) => [
@@ -76,25 +76,25 @@ export const gameActors = pgTable("game_actors", {
 ]);
 
 export const gamePlatforms = pgTable("game_platforms", {
-    gameId: integer("game_id").notNull().references(() => games.gameId, {onDelete: "cascade"}),
-    platformId: integer("platform_id").notNull().references(() => platforms.platformId, {onDelete: "cascade"}),
+    gameId: integer("game_id").notNull().references(() => games.gameId, { onDelete: "cascade" }),
+    platformId: integer("platform_id").notNull().references(() => platforms.platformId, { onDelete: "cascade" }),
 }, (table) => [
     primaryKey({ columns: [table.gameId, table.platformId] })
 ]);
 
 export const gameGenres = pgTable("game_genres", {
-    gameId: integer("game_id").notNull().references(() => games.gameId, {onDelete: "cascade"}),
-    genre: varchar("genre").notNull().references(() => genres.name, {onDelete: "cascade", onUpdate: "cascade"}),
+    gameId: integer("game_id").notNull().references(() => games.gameId, { onDelete: "cascade" }),
+    genre: varchar("genre").notNull().references(() => genres.name, { onDelete: "cascade", onUpdate: "cascade" }),
 }, (table) => [
     primaryKey({ columns: [table.gameId, table.genre] })
 ]);
 
 export const posts = pgTable('posts', {
     postId: integer("post_id").primaryKey().generatedAlwaysAsIdentity(),
-    userId: uuid("user_id").notNull().references(() => users.id, {onDelete: 'cascade'}),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
     title: varchar("title", { length: 50 }).notNull(),
     media: text("media").array().notNull().default([]),
-    gameId: integer("game_id").references(() => games.gameId, {onDelete: "set null"}),
+    gameId: integer("game_id").references(() => games.gameId, { onDelete: "set null" }),
     text: varchar("text", { length: 255 }).notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     editedOn: timestamp("edited_on", { withTimezone: true }).notNull().$onUpdateFn(() => new Date())
@@ -102,31 +102,23 @@ export const posts = pgTable('posts', {
 
 export const comments = pgTable("comments", {
     commentId: integer("comment_id").primaryKey().generatedAlwaysAsIdentity(),
-    postId: integer("post_id").primaryKey().references(() => posts.postId, {onDelete: "cascade"}),
-    userId: uuid("user_id").notNull().references(() => users.id, {onDelete: 'cascade'}),
+    postId: integer("post_id").primaryKey().references(() => posts.postId, { onDelete: "cascade" }),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
     text: varchar("text", { length: 255 }).notNull()
 }, t => [
     check("comment_min_length", sql`LENGTH(${t.text}) > 1`)
 ])
 
-export const reactions = pgEnum("reactions", ["like", "dislike"])
+export const reactionType = pgEnum("reaction_type", ["like", "dislike"])
 
-export const postReactions = pgTable("post_reactions", {
-    userId: uuid("user_id").notNull().references(() => users.id, {onDelete: 'cascade'}),
-    postId: integer("post_id").notNull().references(() => posts.postId, {onDelete: "cascade"}),
-    date: timestamp("date", {withTimezone: true}).notNull().defaultNow(),
-    reaction: reactions("reaction").notNull()
+export const reactions = pgTable("post_reactions", {
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+    postId: integer("post_id").references(() => posts.postId, { onDelete: "cascade" }),
+    commentId: integer("comment_id").references(() => comments.commentId, {onDelete: "cascade"}),
+    date: timestamp("date", { withTimezone: true }).notNull().defaultNow(),
+    reaction: reactionType("reaction").notNull()
 }, t => [
     primaryKey({ columns: [t.postId, t.userId] })
-])
-
-export const commentReactions = pgTable("comment_reactions", {
-    userId: uuid("user_id").notNull().references(() => users.id, {onDelete: 'cascade'}),
-    commentId: integer("comment_id").notNull().references(() => comments.commentId),
-    date: timestamp("date", {withTimezone: true}).notNull().defaultNow(),
-    reaction: reactions("reaction").notNull()
-}, t => [
-    primaryKey({ columns: [t.commentId, t.userId] })
 ])
 
 export const media = pgTable("media", {
@@ -136,3 +128,15 @@ export const media = pgTable("media", {
     gameId: integer("game_id").references(() => games.gameId),
     metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({})
 })
+
+export const tags = pgTable("tags", {
+    tagId: integer("tag_id").primaryKey().generatedAlwaysAsIdentity(),
+    tagName: varchar("tag_name", { length: 20 }).notNull().unique(),
+})
+
+export const postTags = pgTable("post_tags", {
+    tagId: integer("tag_id").references(() => tags.tagId),
+    postId: integer("post_id").references(() => posts.postId),
+}, table => [
+    primaryKey({ columns: [table.tagId, table.postId] })
+])

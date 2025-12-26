@@ -65,10 +65,10 @@ export function GamePage(props: Props) {
                     </div>
                     <div class={styles.tags}>
                         <For each={props.game.tags}>
-                            {tag =>
+                            {genre =>
                                 <div class="cutout">
-                                    {tag}
-                                    <Link to="/games/tags/$tag" params={{ tag }} />
+                                    {genre}
+                                    <Link to="/games/genres/$genre" params={{ genre }} />
                                 </div>
                             }
                         </For>

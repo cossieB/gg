@@ -8,6 +8,10 @@
     flex-direction: column;
     align-items: center;
 
+    >div {
+        width: min(90%, 600px);
+    }
+
     .errs {
         font-size: small;
         color: hsl(0, 64%, 60%);
@@ -15,8 +19,12 @@
 
     button {
         display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 1rem;
-        padding: 1rem 2rem;
+        margin-top: 1rem;
+        height: 2.5rem;
+        padding: 0 1rem;
         background-color: var(--neon-green);
         color: black;
 
@@ -91,7 +99,6 @@
     bottom: 0;
     height: 2px;
     background-color: var(--neon-pink);
-
 }
 
 .dot {
@@ -100,20 +107,22 @@
     width: 0.5rem;
     border-radius: 50%;
     background-color: white;
-    animation: up-down 2s ease-in-out var(--delay) infinite  alternate;
+    animation: up-down 2s ease-in-out var(--delay) infinite alternate;
 }
 
 @keyframes up-down {
-  0% {
-    transform: translateY(0);
-    background-color: var(--neon-pink);
-  }
-  50% {
-    transform: translateY(-10px);
-    background-color: hsl(0, 64%, 60%);
-  }
-  100% {
-    transform: translate(10px);
-    background-color: var(--neon-green);
-  }
+    0% {
+        transform: translateY(0);
+        background-color: var(--neon-pink);
+    }
+
+    50% {
+        transform: translateY(-10px);
+        background-color: hsl(0, 64%, 60%);
+    }
+
+    100% {
+        transform: translate(10px);
+        background-color: var(--neon-green);
+    }
 }

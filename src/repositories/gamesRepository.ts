@@ -4,9 +4,9 @@ import type { ActorView, PlatformView } from "~/drizzle/models";
 import { gameActors, gamePlatforms, gameGenres, actors, platforms, media } from "~/drizzle/schema/schema";
 import { gamesView, publishersView, developersView } from "~/drizzle/schema/views";
 
-export async function findAll() {
+export async function findAll(obj: S = { filters: [] }) {
     try {
-        return gameUtil()
+        return detailedGames(obj)
     } catch (error) {
         console.error(error)
         throw error
@@ -14,21 +14,23 @@ export async function findAll() {
 }
 
 export async function findById(gameId: number) {
-    const list = await gameUtil({ filters: [eq(gamesView.gameId, gameId)] })
+    const list = await detailedGames({ filters: [eq(gamesView.gameId, gameId)] })
     return list.at(0)
 }
 
-export async function findByDeveloper(developerId: number) {
-    return gameUtil({ filters: [eq(gamesView.developerId, developerId)] })
+export async function findByDeveloper(developerId: number, obj: S = { filters: [] }) {
+    return detailedGames({ ...obj, filters: [...obj.filters, eq(gamesView.developerId, developerId)] })
 }
 
-export async function findByPublisher(publisherId: number) {
-    return gameUtil({ filters: [eq(gamesView.publisherId, publisherId)] })
+export async function findByPublisher(publisherId: number, obj: S = { filters: [] }) {
+    return detailedGames({ ...obj, filters: [...obj.filters, eq(gamesView.publisherId, publisherId)] })
 }
 
-export async function findByActor(actorId: number) {
-    return gameUtil({
+export async function findByActor(actorId: number, obj: S = { filters: [] }) {
+    return detailedGames({
+        ...obj,
         filters: [
+            ...obj.filters,
             inArray(
                 gamesView.gameId,
                 db
@@ -39,13 +41,15 @@ export async function findByActor(actorId: number) {
     })
 }
 
-export async function findByPlatform(platformId: number) {
-    return gameUtil({
+export async function findByPlatform(platformId: number, obj: S = { filters: [] }) {
+    return detailedGames({
+        ...obj,
         filters: [
+            ...obj.filters,
             inArray(
                 gamesView.gameId,
                 db
-                    .select({gameId: gamePlatforms.gameId})
+                    .select({ gameId: gamePlatforms.gameId })
                     .from(gamePlatforms)
                     .where(eq(gamePlatforms.platformId, platformId))
             )
@@ -53,13 +57,15 @@ export async function findByPlatform(platformId: number) {
     })
 }
 
-export async function findByTag(tag: string) {
-    return gameUtil({
+export async function findByTag(tag: string, obj: S = { filters: [] }) {
+    return detailedGames({
+        ...obj,
         filters: [
+            ...obj.filters,
             inArray(
                 gamesView.gameId,
                 db
-                    .select({gameId: gameGenres.gameId})
+                    .select({ gameId: gameGenres.gameId })
                     .from(gameGenres)
                     .where(eq(gameGenres.genre, tag))
             )
@@ -67,7 +73,13 @@ export async function findByTag(tag: string) {
     })
 }
 
-function gameUtil(obj?: { filters?: SQL[] }) {
+type S = {
+    filters: SQL[]
+    limit?: number,
+    offset?: number
+}
+
+function detailedGames(obj: S = { filters: [] }) {
     const { developerId, publisherId, ...gamesColumns } = getColumns(gamesView)
     const actorQuery = db.$with("aq").as(
         db.select({
@@ -113,13 +125,13 @@ function gameUtil(obj?: { filters?: SQL[] }) {
     const mediaQuery = db.$with("mq").as(
         db.select({
             gameId: media.gameId,
-            media: sql<{key: string, contentType: string}[]>`JSONB_AGG(JSONB_BUILD_OBJECT(
+            media: sql<{ key: string, contentType: string }[]>`JSONB_AGG(JSONB_BUILD_OBJECT(
                 'key', ${media.key},
                 'contentType', ${media.contentType}
             ))`.as("m_arr")
         })
-        .from(media)
-        .groupBy(media.gameId)
+            .from(media)
+            .groupBy(media.gameId)
     )
 
     const gamesQuery = db
@@ -131,7 +143,7 @@ function gameUtil(obj?: { filters?: SQL[] }) {
             tags: sql<string[]>`COALESCE(${tagQuery.tags}, '{}')`,
             platforms: sql<PlatformView[]>`COALESCE(${platformQuery.platformArr}, '{}')`,
             actors: sql<(ActorView & { character: string })[]>`COALESCE(${actorQuery.actorArr}, '{}')`,
-            media: sql<{key: string, contentType: string}[]>`COALESCE(${mediaQuery.media}, '{}')`
+            media: sql<{ key: string, contentType: string }[]>`COALESCE(${mediaQuery.media}, '{}')`
         })
         .from(gamesView)
         .innerJoin(developersView, eq(gamesView.developerId, developersView.developerId))
@@ -140,7 +152,13 @@ function gameUtil(obj?: { filters?: SQL[] }) {
         .leftJoin(platformQuery, eq(gamesView.gameId, platformQuery.gameId))
         .leftJoin(tagQuery, eq(gamesView.gameId, tagQuery.gameId))
         .leftJoin(mediaQuery, eq(gamesView.gameId, mediaQuery.gameId))
-        .where(and(...(obj?.filters ?? [])))
+        .where(and(...obj.filters))
+        .orderBy(gamesView.title)
+
+    if (obj.limit)
+        gamesQuery.limit(obj.limit)
+    if (obj.offset)
+        gamesQuery.offset(obj.offset)
 
     return gamesQuery
 }
