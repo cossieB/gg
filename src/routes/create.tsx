@@ -4,6 +4,7 @@ import { Suspense } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { Form } from '~/components/Forms/Form'
 import { FormProvider } from '~/components/Forms/FormContext'
+import { UploadBox } from '~/components/UploadBox/UploadBox'
 import { useGamesCache } from '~/hooks/useGameCache'
 import { getCurrentUser } from '~/services/authService'
 import { getGamesFn } from '~/services/gamesService'
@@ -35,18 +36,32 @@ function RouteComponent() {
         text: "",
         media: [],
         game: null as { gameId: number, title: string } | null,
-        tags: [] as string[]
+        tags: [] as string[],
+        files: [] as {objectUrl: string, file: File}[]
     })
     return (
         <div class='flexCenter'>
             <FormProvider>
                 <Form
-
+                    disabled={!input.title}
                 >
                     <Form.Input<typeof input>
                         field="title"
                         setter={val => setInput({ title: val })}
                         value={input.title}
+                        required
+                    />
+                    <UploadBox
+                        label='Images'
+                        maxSize={2}
+                        onSuccess={(files) => setInput({files})}
+                        style={{height: "10rem"}}
+                        accept={{
+                            audio: false,
+                            image: true,
+                            video: true
+                        }}
+                        limit={4}
                     />
                     <Form.Textarea<typeof input>
                         field="text"

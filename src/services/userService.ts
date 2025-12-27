@@ -5,12 +5,13 @@ import * as userRepository from "~/repositories/userRepository"
 import { forceLogin, getCurrentUser as getCurrentUser } from "./authService";
 import * as uploadService from "~/services/uploadService/cloudflareUploadService"
 import assert from "node:assert";
+import { authedMiddleware } from "~/middleware/authorization";
 
 export const getLoggedInUser = createServerFn()
     .handler(async () => {
         const session = await getCurrentUser()
         if (!session) throw notFound()
-        const user = (await userRepository.findById(session.id)).at(0)
+        const user = (await userRepository.findById(session.id)).at(0);
         if (!user) {
             return forceLogin()
         }
@@ -32,45 +33,25 @@ export const getUserByIdFn = createServerFn()
     .handler(async ({ data }) => userRepository.findById(data))
 
 export const updateCurrentUser = createServerFn({ method: "POST" })
-    .inputValidator((fd: unknown) => {
-        if (fd instanceof FormData) return fd
-        throw new Response(null, { status: 400 })
-    })
-    .handler(async ({ data }) => {
+    .middleware([authedMiddleware])
+    .inputValidator(z.object({
+        displayName: z.string().min(3).max(15).optional(),
+        bio: z.string().max(255).optional(),
+        image: z.string().optional(),
+        banner: z.string().optional(),
+        dob: z.iso.date().nullish(),
+        location: z.string().max(100).nullish()
+    }))
+    .handler(async ({ data, context: { user } }) => {
         const r2Domain = process.env.R2_DOMAIN
         assert(r2Domain)
-        const user = await getCurrentUser()
-        if (!user) throw new Response(null, { status: 401 })
 
-        const UserUpdateSchema = z.object({
-            displayName: z.string().min(3).max(15).optional(),
-            bio: z.string().max(255).optional(),
-            image: z.instanceof(File)
-                .refine(file => file.type.startsWith("image/"))
-                .refine(file => file.size < 2_500_000, "File too large")
-                .optional(),
-            banner: z.instanceof(File)
-                .refine(file => file.type.startsWith("image/"))
-                .refine(file => file.size < 2_500_000, "File too large")
-                .optional(),
-            dob: z.iso.date().nullish(),
-            location: z.string().max(100).nullish()
-        })
-        const obj = Object.fromEntries(data.entries())
-        const parsed = UserUpdateSchema.parse(obj)
-        if (Object.keys(parsed).length === 0) throw Response.json({ error: "Nothing to update" }, { status: 400 })
+        if (!user.emailVerified) throw Response.json("Please verify your account", { status: 403 })
 
-        const prom1 = parsed.image && uploadService.uploadFromServer(parsed.image, "users", user.id, "avatars");
-        const prom2 = parsed.banner && uploadService.uploadFromServer(parsed.banner, "users", user.id, "banners");
+        if (Object.keys(data).length === 0) throw Response.json({ error: "Nothing to update" }, { status: 400 })
 
         try {
-            const [avatar, banner] = await Promise.all([prom1, prom2])
-
-            await userRepository.updateUser(user.id, {
-                ...parsed, 
-                image: avatar ? r2Domain+avatar.Key : undefined, 
-                banner: banner ? r2Domain + banner.Key : undefined
-            });
+            await userRepository.updateUser(user.id, data);
             return new Response(null, { status: 200 })
         }
         catch (error) {

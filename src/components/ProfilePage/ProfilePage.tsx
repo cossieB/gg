@@ -1,4 +1,4 @@
-import { createStore } from "solid-js/store";
+import { createStore, unwrap } from "solid-js/store";
 import { getLoggedInUser } from "~/services/userService";
 import { Form } from "../Forms/Form";
 import { FormProvider } from "../Forms/FormContext";
@@ -11,10 +11,31 @@ import { updateCurrentUser } from "~/services/userService";
 import { useServerFn } from "@tanstack/solid-start";
 import { useMutation, useQueryClient } from "@tanstack/solid-query";
 import { useLogout } from "~/hooks/useLogout";
-import { onCleanup } from "solid-js";
+import { createSignal, mergeProps, onCleanup } from "solid-js";
+import { getProfileSignedUrl } from "~/services/uploadService";
+import { uploadToSignedUrl } from "~/utils/uploadToSignedUrl";
 
 export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser>> }) {
-    const action = useServerFn(updateCurrentUser);
+    const updateUser = useServerFn(updateCurrentUser);
+    const getAvatarSignedUrl = useServerFn(getProfileSignedUrl)
+    const getBannerSignedUrl = useServerFn(getProfileSignedUrl)
+
+    const keys: { image?: string, banner?: string } = {}
+
+    async function getUrl(cb: typeof getAvatarSignedUrl, file: File, field: "image" | "banner") {
+        const res = await cb({
+            data: {
+                contentLength: file.size,
+                contentType: file.type,
+                filename: file.name
+            },
+            signal: abortController.signal
+        })
+
+        setFiles(field, { file, signedUrl: res.signedUrl })
+        keys[field] = import.meta.env.VITE_STORAGE_DOMAIN + res.key
+    }
+
     const { addToast } = useToastContext()
     const queryClient = useQueryClient()
     const logout = useLogout()
@@ -25,7 +46,7 @@ export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser
     })
 
     const mutation = useMutation(() => ({
-        mutationFn: action,
+        mutationFn: updateUser,
         onSuccess: () => {
             addToast({ text: "Success", type: "info" })
             queryClient.setQueryData(["users", user.userId], user)
@@ -36,28 +57,36 @@ export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser
         },
     }))
 
-    const [user, setUser] = createStore<typeof props.user>(JSON.parse(JSON.stringify(props.user)))
-    const [files, setFiles] = createStore<{avatar?: File, banner?: File}>({})
+    const [user, setUser] = createStore(mergeProps(props.user))
+    const [isUploading, setIsUploading] = createSignal(false)
+    const [files, setFiles] = createStore<NewType>({})
 
     async function handleSubmit(e: SubmitEvent) {
         e.preventDefault();
 
-        const obj = objectDifference(user, props.user);
-        if (Object.keys(obj).length == 0) return addToast({ text: "Nothing to update", type: "warning" });
-        const fd = new FormData()
+        try {
+            setIsUploading(true)
+            await Promise.all([
+                files.image && uploadToSignedUrl(files.image.signedUrl, files.image.file, { signal: abortController.signal }),
+                files.banner && uploadToSignedUrl(files.banner.signedUrl, files.banner.file, { signal: abortController.signal })
+            ])
+            if (keys.banner) setUser('banner', keys.banner)
+            if (keys.image) setUser('image', keys.image)
 
-        files.avatar && fd.append("image", files.avatar)
-        files.banner && fd.append("banner", files.banner)
-        const res = await mutation.mutateAsync({ 
-            data: fd, 
-            signal: abortController.signal })
-
+            await mutation.mutateAsync({data: user, signal: abortController.signal},)
+        } 
+        catch (error) {
+            addToast({ text: "Something went wrong. Please try again later", type: "error" })
+        }
+        finally {
+            setIsUploading(false)
+        }
     }
 
     return (
         <div class={`${styles.profile} flexCenter`}>
             <FormProvider>
-                <Form onSubmit={handleSubmit} isPending={mutation.isPending}>
+                <Form onSubmit={handleSubmit} isPending={mutation.isPending || isUploading()}>
                     <Form.Input<typeof user>
                         field="displayName"
                         label='Display Name'
@@ -68,19 +97,35 @@ export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser
                     <div class={styles.images}>
                         <UploadBox
                             label="Avatar"
-                            onSuccess={(src, file) => {
-                                setUser({ image: src })
-                                setFiles({avatar: file})
+                            onSuccess={(files) => {
+                                const file = files.at(0)
+                                if (!file) return
+                                setUser({ image: file.objectUrl })
+                                getUrl(getAvatarSignedUrl, file.file, 'image')
                             }}
                             maxSize={1}
+                            limit={1}
+                            accept={{
+                                image: true,
+                                audio: false,
+                                video: false
+                            }}
                         />
                         <UploadBox
                             label="Banner"
-                            onSuccess={(src, file) => {
-                                setUser({ banner: src })
-                                setFiles({banner: file})
+                            onSuccess={files => {
+                                const file = files.at(0)
+                                if (!file) return
+                                setUser({ banner: file.objectUrl })
+                                getUrl(getBannerSignedUrl, file.file, 'banner')
                             }}
                             maxSize={1}
+                            limit={1}
+                            accept={{
+                                image: true,
+                                audio: false,
+                                video: false
+                            }}
                         />
                         <div class={styles.preview}>
                             <div><img src={user.image ?? ""} /></div>
@@ -118,3 +163,14 @@ export function Profile(props: { user: Awaited<ReturnType<typeof getLoggedInUser
         </div>
     )
 }
+
+type NewType = {
+    image?: {
+        file: File
+        signedUrl: string
+    };
+    banner?: {
+        file: File
+        signedUrl: string
+    };
+};

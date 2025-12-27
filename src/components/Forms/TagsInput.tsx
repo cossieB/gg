@@ -62,6 +62,7 @@ export function TagsInput(initialProps: Props) {
                 type="text"
                 placeholder="Add tag..."
                 disabled={isDisabled()}
+                maxLength={15}
             />
             <button
                 class={styles.addBtn}

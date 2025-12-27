@@ -1,9 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { createServerFn } from "@tanstack/solid-start";
-import z from "zod";
-import { adminOnlyMiddleware } from "~/middleware/authorization";
 import { join } from "node:path/posix";
 
 const S3 = new S3Client({
@@ -19,12 +16,12 @@ const S3 = new S3Client({
 
 export function uploadFromServer(file: File, ...pathSegments: string[]) {
     const ext = file.name.slice(file.name.lastIndexOf("."))
-    const filename = join(...pathSegments, crypto.randomUUID())
+    const key = join(...pathSegments, crypto.randomUUID() + ext)
     const upload = new Upload({
         client: S3,
         params: {
             Bucket: "clipz",
-            Key: filename + ext,
+            Key: key,
             Body: file,
             ContentType: file.type
         }
@@ -32,27 +29,18 @@ export function uploadFromServer(file: File, ...pathSegments: string[]) {
     return upload.done()
 }
 
-export const generateSignedUrl = createServerFn()
-    .inputValidator(z.object({
-        filename: z.string(),
-        contentType: z.string(),
-        pathSegments: z.string().array().min(1)
-    }))
-    .middleware([
-        adminOnlyMiddleware
-    ])
-    .handler(async ({ data }) => {
-        const { filename, contentType, pathSegments } = data;
-        const prefix = join(...pathSegments)
-        const ext = filename.slice(filename.lastIndexOf("."))
-        const signedUrl = getSignedUrl(
-            S3,
-            new PutObjectCommand({
-                Bucket: "clipz",
-                Key: prefix + crypto.randomUUID() + ext,
-                ContentType: contentType,
-            }), {
-            expiresIn: 600,
-        })
-        return {signedUrl}
+export async function generateSignedUrl(filename: string, contentType: string, contentLength: number, pathSegments: string[]) {
+    const ext = filename.slice(filename.lastIndexOf("."))
+    const key = join(...pathSegments, crypto.randomUUID() + ext)
+    const signedUrl = await getSignedUrl(
+        S3,
+        new PutObjectCommand({
+            Bucket: "clipz",
+            Key: key,
+            ContentType: contentType,
+            ContentLength: contentLength
+        }), {
+        expiresIn: 5 * 60,
     })
+    return {signedUrl, key}
+}

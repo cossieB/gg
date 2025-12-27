@@ -34,7 +34,7 @@ export function FormInput<T>(props: Props<T>) {
                     setErrors(props.field, prev => [...prev, ...errs])
                 }}
             />
-            <label> {p.label ?? titleCase(props.field)} </label>
+            <label> {p.label ?? titleCase(props.field)} {props.required && "*"} </label>
             <div class={styles.errs}>
                 <ul>
 

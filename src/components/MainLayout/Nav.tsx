@@ -38,7 +38,7 @@ export function Nav(props: { toggleNav(): void }) {
                     label="Publishers"
                     icon={<BriefcaseBusiness />}
                 />
-                <Show when={session().data}>
+                <Show when={session().data && session().data!.user.emailVerified}>
                     <NavItem
                         to="/create"
                         icon={<CirclePlus />}
