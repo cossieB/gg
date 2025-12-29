@@ -1,0 +1,10 @@
+.imgs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+
+    >img {
+        aspect-ratio: 16/9;
+        object-fit: contain;
+    }
+}

@@ -1,5 +1,5 @@
 import { createStore, unwrap } from "solid-js/store";
-import { getLoggedInUser } from "~/serverFn/users";
+import { getLoggedInUser, updateCurrentUser } from "~/serverFn/users";
 import { Form } from "../Forms/Form";
 import { FormProvider } from "../Forms/FormContext";
 import styles from "./ProfilePage.module.css"
@@ -7,7 +7,6 @@ import { ConfirmPopover } from "../Popover/Popover";
 import { useToastContext } from "~/hooks/useToastContext";
 import { UploadBox } from "../UploadBox/UploadBox";
 import { objectDifference } from "~/lib/objectDifference";
-import { updateCurrentUser } from "~/serverFn/users";
 import { useServerFn } from "@tanstack/solid-start";
 import { useMutation, useQueryClient } from "@tanstack/solid-query";
 import { useLogout } from "~/hooks/useLogout";
