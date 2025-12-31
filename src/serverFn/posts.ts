@@ -4,6 +4,7 @@ import z from "zod";
 import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import * as postRepository from "~/repositories/postRepository"
 import { sanitizeText } from "~/utils/sanitizeText";
+import { getCurrentUser } from "./auth";
 
 export const createPostFn = createServerFn({ method: "POST" })
     .middleware([verifiedOnlyMiddleware])
@@ -30,8 +31,31 @@ export const getPostFn = createServerFn()
         return postId
     })
     .handler(async ({data}) => {
-        return postRepository.findById(data)
+        const user = await getCurrentUser()
+        const post = await postRepository.findById(data, user?.id)
+        if (!post) throw notFound()
+        return post
     })
 
 export const getAllPostsFn = createServerFn()
-    .handler(async () => postRepository.findAll())
+    .handler(async () => {
+        const user = await getCurrentUser()
+        return postRepository.findAll(undefined, user?.id)
+    })
+
+export const getPostsByTag = createServerFn()
+    .inputValidator((tag: string) => tag)
+    .handler(async ({data}) => {
+        const user = await getCurrentUser()
+        return postRepository.findByTag(data, undefined, user?.id)
+    })
+
+export const reactToPost = createServerFn() 
+    .middleware([verifiedOnlyMiddleware])
+    .inputValidator(z.object({
+        postId: z.number(),
+        reaction: z.enum(["like", "dislike"])
+    }))
+    .handler(async ({data, context}) => {
+        postRepository.reactToPost(data.postId, context.user.id, data.reaction)
+    })

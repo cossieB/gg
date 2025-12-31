@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/solid-query'
-import { createFileRoute } from '@tanstack/solid-router'
+import { createFileRoute, notFound } from '@tanstack/solid-router'
 import { Suspense } from 'solid-js'
 import { CompanyPage } from '~/components/CompanyPage/CompanyPage'
 import { GamesList } from '~/components/GamesList'
@@ -15,6 +15,7 @@ export const Route = createFileRoute('/publishers/$publisherId')({
         })
     },
     loader: async ({ context, params: { publisherId } }) => {
+        if (Number.isNaN(publisherId)) throw notFound()
         return await context.queryClient.ensureQueryData({
             queryKey: ["publishers", publisherId],
             queryFn: () => getPublisherFn({ data: publisherId })

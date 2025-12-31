@@ -1,5 +1,5 @@
 .container {
-    width: min(90%, 800px);
+    width: min(90%, 1200px);
     margin: 1rem auto;
     display: flex;
     flex-direction: column;
@@ -12,7 +12,15 @@
         flex: 1;
         text-overflow: ellipsis;
     }
-
+    a:not(.a), img, video, button, audio {
+        z-index: 5;
+    }
+    button {
+        padding: 0.5rem;
+    }
+    [data-func="carousel"] {
+        z-index: 5;
+    }
 }
 
 .user {
@@ -99,12 +107,11 @@
         gap: 0.25rem;
     }
     button {
-        z-index: 5;
         transition: color 200ms ease;
-        &:hover {
+        &:hover, &.liked {
             color: var(--neon-green);
         }
-        &:is(button:nth-child(2)):hover {
+        &:is(button:nth-child(2)):hover, &.disliked {
             color: red
         }
     }

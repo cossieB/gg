@@ -1,24 +1,40 @@
-import { type getAllPostsFn } from '~/serverFn/posts'
+import { getPostFn, reactToPost } from '~/serverFn/posts'
 import { Carousel } from '../Carousel'
 import styles from "./Post.module.css"
-import { For } from 'solid-js'
+import { For, Show } from 'solid-js'
 import { CircleAlertIcon, MessageCircleIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-solid'
 import { getRelativeTime } from '~/lib/getRelativeTime'
 import { formatDate } from '~/lib/formatDate'
 import { Link } from '@tanstack/solid-router'
+import { useServerFn } from '@tanstack/solid-start'
+import { useMutation } from '@tanstack/solid-query'
 
 type Props = {
-    post: NonNullable<Awaited<ReturnType<typeof getAllPostsFn>>>[number]
+    post: Awaited<ReturnType<typeof getPostFn>>
 }
 
 export function PostBlock(props: Props) {
+    const react = useServerFn(reactToPost)
+    const mutation = useMutation(() => ({
+        mutationFn: react
+    }))
+    console.log(props.post.yourReaction)
+    function fn(reaction: "like" | "dislike") {
+        return function () {
+            mutation.mutate({
+                data: {
+                    postId: props.post.postId,
+                    reaction
+                }
+            })
+        }
+    }
 
     return (
         <div class={styles.container}>
             <div class={styles.user}>
                 <img src={props.post.user.image} />
                 {props.post.user.displayUsername}
-                
             </div>
 
             <div class={styles.content}>
@@ -28,33 +44,59 @@ export function PostBlock(props: Props) {
                         {getRelativeTime(props.post.createdAt)}
                     </span>
                 </div>
-                <Carousel
-                    media={props.post.media.map(m => ({
-                        contentType: m.contentType,
-                        url: import.meta.env.VITE_STORAGE_DOMAIN + m.key
-                    }))}
-                    showNextBtn
-                    showPrevBtn
-                />
+                <Show when={props.post.media.length > 0}>
+                    <Carousel
+                        media={props.post.media.map(m => ({
+                            contentType: m.contentType,
+                            url: import.meta.env.VITE_STORAGE_DOMAIN + m.key
+                        }))}
+                        showNextBtn
+                        showPrevBtn
+                    />
+                </Show>
                 <div class={styles.main} innerHTML={props.post.text} />
-                <div class={styles.tags} >
-                    <For each={props.post.tags}>
-                        {tag => <div class="cutout">{tag}</div>}
-                    </For>
-                </div>
+                <Show when={props.post.tags.length > 0}>
+                    <div class={styles.tags} >
+                        <For each={props.post.tags}>
+                            {tag =>
+                                <div class="cutout">
+                                    {tag}
+                                    <Link to='/posts/tags/$tag' params={{ tag }} />
+                                </div>}
+                        </For>
+                    </div>
+                </Show>
                 <div class={styles.buttons}>
                     <div>
                         <button><MessageCircleIcon /></button>
                         {props.post.comments}
-                        <button><CircleAlertIcon />  </button>
                     </div>
                     <div class={styles.react} >
-                        <button> <ThumbsUpIcon /> </button>
-                        <button> <ThumbsDownIcon /> </button>
+                        <button onclick={fn('like')}
+                            classList={{
+                                [styles.liked]: (() => {
+                                    if (!props.post.yourReaction) return false
+                                    return props.post.yourReaction === "like"
+                                })()
+                            }}
+                        >
+                            <ThumbsUpIcon />
+                        </button>
+                        <button
+                            onclick={fn('dislike')}
+                            classList={{
+                                [styles.disliked]: (() => {
+                                    if (!props.post.yourReaction) return false
+                                    return props.post.yourReaction === "dislike"
+                                })()
+                            }}
+                        >
+                            <ThumbsDownIcon />
+                        </button>
                         {props.post.reactions.likes - props.post.reactions.dislikes}
                     </div>
                 </div>
-                <Link class={styles.a} to='/posts/$postId' params={{postId: props.post.postId}} />
+                <Link class={styles.a} to='/posts/$postId' params={{ postId: props.post.postId }} />
             </div>
         </div>
     )

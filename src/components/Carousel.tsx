@@ -21,7 +21,7 @@ export function Carousel(props: Props) {
             setIdx(p => p - 1)
     }
     return (
-        <div class={styles.container}>
+        <div data-func="carousel" class={styles.container}>
             <div
                 class={styles.carousel}
                 style={{ "--idx": idx() }}

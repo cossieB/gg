@@ -1,4 +1,4 @@
-import { and, count, desc, eq, getColumns, SQL, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, inArray, SQL, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
 import { comments, media, postReactions, posts, postTags, users } from "~/drizzle/schema";
 import { Filters } from "./types";
@@ -24,15 +24,47 @@ export function createPost(obj: PostInsert) {
     })
 }
 
-export async function findAll(obj?: Filters) {
-    return detailedPosts(obj)
+export async function findAll(obj?: Filters, userId?: string) {
+    return detailedPosts(obj, userId)
 }
 
-export async function findById(postId: number) {
-    return (await detailedPosts({ filters: [eq(posts.postId, postId)] })).at(0)
+export async function findById(postId: number, userId?: string) {
+    return (await detailedPosts({ filters: [eq(posts.postId, postId)] }, userId)).at(0)
 }
 
-function detailedPosts(obj: Filters = { filters: [] }) {
+export async function findByTag(tag: string, obj: Filters = {filters: []}, userId?: string) {
+    return detailedPosts({
+        ...obj,
+        filters: [
+            ...obj.filters,
+            inArray(
+                posts.postId,
+                db
+                    .select({postId: postTags.postId})
+                    .from(postTags)
+                    .where(eq(postTags.tagName, tag))
+            )
+        ]
+    }, userId)
+}
+
+export async function reactToPost(postId: number, userId: string, reaction: "like" | "dislike") {
+    return db.execute(sql`
+            WITH deleted AS (
+                DELETE FROM post_reactions
+                WHERE post_id = ${postId} AND user_id = ${userId}
+                RETURNING reaction
+            )
+            INSERT INTO post_reactions (post_id, user_id, reaction)
+            SELECT ${postId}, ${userId}, ${reaction}
+            WHERE NOT EXISTS (
+                SELECT 1 FROM deleted WHERE reaction = ${reaction}
+            );
+        `)
+        
+}
+
+function detailedPosts(obj: Filters = { filters: [] }, userId?: string) {
     const mediaQuery = db.$with("mq").as(
         db.select({
             postId: media.postId,
@@ -73,7 +105,16 @@ function detailedPosts(obj: Filters = { filters: [] }) {
         .groupBy(comments.postId)
     )
 
-    const query = db.with(mediaQuery, tagsQuery, reactionQuery, commentsQuery).select({
+    const userReactionQuery = db.$with("urq").as(
+        db.select({
+            postId: postReactions.postId,
+            reaction: postReactions.reaction
+        })
+        .from(postReactions)
+        .where(eq(postReactions.userId, userId!))
+    )
+
+    const query = db.with(mediaQuery, tagsQuery, reactionQuery, commentsQuery, userReactionQuery).select({
         ...getColumns(posts),
         media: sql<{ key: string, contentType: string }[]>`COALESCE(${mediaQuery.media}, '[]'::JSONB)`,
         tags: sql<string[]>`COALESCE(${tagsQuery.tags}, '{}')`,
@@ -92,14 +133,16 @@ function detailedPosts(obj: Filters = { filters: [] }) {
             likes: reactionQuery.likes,
             dislikes: reactionQuery.dislikes
         },
-        comments: sql<number>`COALESCE(${commentsQuery.numComments}, 0)`.as("num_comments")
+        comments: sql<number>`COALESCE(${commentsQuery.numComments}, 0)`.as("num_comments"),
+        ...userId && ({
+            yourReaction: userReactionQuery.reaction
+        })
     })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
         .leftJoin(mediaQuery, eq(posts.postId, mediaQuery.postId))
         .leftJoin(tagsQuery, eq(posts.postId, tagsQuery.postId))
-        .leftJoin(postReactions, eq(posts.postId, postReactions.postId))
-        .leftJoin(reactionQuery, eq(posts.postId, postReactions.postId))
+        .leftJoin(reactionQuery, eq(posts.postId, reactionQuery.postId))
         .leftJoin(commentsQuery, eq(posts.postId, commentsQuery.postId))
         .orderBy(desc(posts.createdAt))
         .where(and(...obj.filters))
@@ -108,6 +151,9 @@ function detailedPosts(obj: Filters = { filters: [] }) {
         query.limit(obj.limit)
     if (obj.offset)
         query.offset(obj.offset)
+
+    if (userId)
+        query.leftJoin(userReactionQuery, eq(userReactionQuery.postId, posts.postId))
 
     return query
 }
