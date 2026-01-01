@@ -5,6 +5,7 @@ import { useFormContext } from "~/hooks/useFormContext";
 import { Formtextarea } from "./FormTextarea";
 import { FormSelect } from "./Select";
 import { TagsInput } from "./TagsInput";
+import { FormProvider } from "./FormContext";
 
 type Props = {
     children: JSXElement;
@@ -19,6 +20,7 @@ export function Form(props: Props) {
             return Object.values(errors).flat(1)
         })
     return (
+        <FormProvider>
         <form class={styles.form} onsubmit={props.onSubmit}>
             {props.children}
             <button disabled={props.isPending || props.disabled || allErrors().length > 0} type="submit">
@@ -29,6 +31,7 @@ export function Form(props: Props) {
                 </Show>
             </button>
         </form>
+        </FormProvider>
     )
 }
 

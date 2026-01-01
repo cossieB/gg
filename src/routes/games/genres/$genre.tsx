@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/solid-router'
-import { GamesList } from '~/components/GamesList'
+import { GamesList } from '~/features/games/components/GamesList'
 import { getGamesByGenreFn } from '~/serverFn/games'
 
 export const Route = createFileRoute('/games/genres/$genre')({
@@ -17,10 +17,10 @@ function RouteComponent() {
 
     return (
         <GamesList
-            query={() => ({
+            opts={{
                 queryKey: ["games", "tag", params().genre],
                 queryFn: () => getGamesByGenreFn({ data: params().genre })
-            })}
+            }}
         />
     )
 }

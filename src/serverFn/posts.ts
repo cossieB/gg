@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/solid-start";
 import z from "zod";
 import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import * as postRepository from "~/repositories/postRepository"
-import { sanitizeText } from "~/utils/sanitizeText";
+import { sanitizeText } from "~/utils2/sanitizeText";
 import { getCurrentUser } from "./auth";
 
 export const createPostFn = createServerFn({ method: "POST" })

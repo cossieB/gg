@@ -1,5 +1,6 @@
 export function getRelativeTime(date: Date) {
   const now = new Date();
+  // @ts-expect-error subtracting dates is a valid operation. Don't know why Typescript errors
   const diffInSeconds = Math.round((date - now) / 1000);
 
   // Define thresholds in seconds

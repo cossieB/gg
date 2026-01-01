@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/solid-router'
 import { createEffect, For, Suspense } from 'solid-js'
 import { LogoLink } from '~/components/LogoLink/LogoLink'
 import { getDevelopersFn } from '~/serverFn/developers'
-import styles from "~/lists.module.css"
 
 export const Route = createFileRoute('/developers/')({
     component: RouteComponent,
@@ -34,7 +33,7 @@ function RouteComponent() {
     })
 
     return (
-        <div class={styles.grid300}>
+        <div class={"grid300"}>
 
             <Suspense>
                 <For each={result.data}>

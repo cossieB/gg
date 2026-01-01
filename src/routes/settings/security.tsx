@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/solid-router'
-import { SecurityPage } from '~/components/ProfilePage/SecurityPage'
-
+import { SecurityPage } from '~/features/users/components/SecurityPage'
 export const Route = createFileRoute('/settings/security')({
     component: RouteComponent,
 })

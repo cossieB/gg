@@ -5,7 +5,7 @@ type Functions = {
     onSwipeDown?: () => void
 }
 
-export function useTouch(funcs: Functions = {}) {
+export function getTouchHandlers(funcs: Functions = {}) {
     let x1 = 0;
     let y1 = 0
 

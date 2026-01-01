@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from '@tanstack/solid-router'
-import { CreatePostPage } from '~/components/CreatePostPage/CreatePostPage'
+import { CreatePostPage } from '~/features/posts/components/CreatePostPage';
 import { getCurrentUser } from '~/serverFn/auth'
 import { getGamesFn } from '~/serverFn/games'
 
-export const Route = createFileRoute('/create')({
+export const Route = createFileRoute('/posts/create')({
     component: RouteComponent,
     beforeLoad: async () => {
         const user = await getCurrentUser();

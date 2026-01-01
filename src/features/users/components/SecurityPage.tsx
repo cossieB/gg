@@ -1,12 +1,12 @@
-import { createEffect, createSignal } from 'solid-js'
+import { createSignal } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { authClient } from '~/auth/authClient'
 import { Form } from '~/components/Forms/Form'
 import { FormProvider } from '~/components/Forms/FormContext'
 import { useToastContext } from '~/hooks/useToastContext'
 import styles from "./ProfilePage.module.css"
-import { ConfirmPopover } from '../Popover/Popover'
 import { useNavigate } from '@tanstack/solid-router'
+import { ConfirmPopover } from '~/components/Popover/Popover'
 
 export function SecurityPage() {
     const { addToast } = useToastContext()

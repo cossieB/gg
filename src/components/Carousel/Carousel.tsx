@@ -1,7 +1,7 @@
 import { createSignal, For, Match, Show, Switch } from "solid-js"
 import styles from "./Carousel.module.css"
 import { MoveLeftIcon, MoveRightIcon } from "lucide-solid"
-import { useTouch } from "~/hooks/useTouch"
+import { getTouchHandlers } from "~/lib/getTouchHandlers"
 
 type Props = {
     showPrevBtn: boolean
@@ -21,7 +21,7 @@ export function Carousel(props: Props) {
         else
             setIdx(p => p - 1)
     }
-    const { handleTouchEnd, handleTouchStart } = useTouch({ onSwipeLeft: next, onSwipeRight: prev })
+    const { handleTouchEnd, handleTouchStart } = getTouchHandlers({ onSwipeLeft: next, onSwipeRight: prev })
     return (
         <div
             data-func="carousel" class={styles.container}

@@ -35,7 +35,7 @@ function RouteComponent() {
 
     return (
         <Suspense>
-            <div class={styles.grid300}>
+            <div class={"grid300"}>
                 <For each={result.data}>
                     {pub =>
                         <LogoLink

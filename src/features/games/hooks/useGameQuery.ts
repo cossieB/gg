@@ -1,9 +1,16 @@
-import { useQueryClient, UseQueryResult } from "@tanstack/solid-query"
+import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/solid-query"
 import { createEffect } from "solid-js"
 import { type getGamesFn } from "~/serverFn/games"
 
-export function useGamesCache(result: UseQueryResult<Awaited<ReturnType<typeof getGamesFn>>> ) {
+type Opts = {
+    queryKey: readonly ["games", ...(string | number)[]],
+    queryFn: () => ReturnType<typeof getGamesFn>
+}
+
+export function useGamesQuery(opts: Opts ) {
+    const result = useQuery(() => opts)
     const queryClient = useQueryClient()
+    
     createEffect(() => {
         if (result.data)
             for (const game of result.data) {
@@ -13,4 +20,5 @@ export function useGamesCache(result: UseQueryResult<Awaited<ReturnType<typeof g
                 queryClient.setQueryData(["publishers", game.publisher.publisherId], game.publisher)
             }
     })
+    return result
 }

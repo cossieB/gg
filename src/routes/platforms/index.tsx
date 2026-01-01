@@ -34,7 +34,7 @@ function RouteComponent() {
     })
 
     return (
-        <div class={styles.grid300}>
+        <div class={"grid300"}>
             <Suspense>
                 <For each={result.data}>
                     {platform =>

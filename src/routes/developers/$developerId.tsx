@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/solid-query'
 import { createFileRoute, notFound } from '@tanstack/solid-router'
 import { Suspense } from 'solid-js'
 import { CompanyPage } from '~/components/CompanyPage/CompanyPage'
-import { GamesList } from '~/components/GamesList'
-import { NotFound } from '~/components/NotFound'
+import { GamesList } from '~/features/games/components/GamesList'
+import { NotFound } from '~/components/NotFound/NotFound'
 import { getDeveloperFn } from '~/serverFn/developers'
 import { getGamesByDeveloperFn } from '~/serverFn/games'
 
@@ -46,10 +46,10 @@ function RouteComponent() {
                 />
             </Suspense>
             <GamesList
-                query={() => ({
+                opts={{
                     queryKey: ["games", "byDev", params().developerId],
                     queryFn: () => getGamesByDeveloperFn({ data: params().developerId })
-                })}
+                }}
             />
         </>
     )

@@ -1,17 +1,15 @@
 import { useQuery } from "@tanstack/solid-query"
 import type { getGamesFn } from "~/serverFn/games"
-import { PhotoCardGrid } from "./CardLink/PhotoCardLink"
-import { useGamesCache } from "~/hooks/useGameCache"
+import { PhotoCardGrid } from "../../../components/CardLink/PhotoCardLink"
+import { useGamesQuery } from "~/features/games/hooks/useGameQuery"
 
 type Opts = {
     queryKey: readonly ["games", ...(string | number)[]],
     queryFn: () => ReturnType<typeof getGamesFn>
 }
 
-export function GamesList(props: {query: () => Opts}) {
-    const result = useQuery(props.query)
-    
-    useGamesCache(result)
+export function GamesList(props: {opts: Opts}) {
+    const result = useGamesQuery(props.opts)
 
     return <PhotoCardGrid
         arr={result.data!}

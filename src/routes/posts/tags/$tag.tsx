@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/solid-query'
 import { createFileRoute } from '@tanstack/solid-router'
 import { Suspense } from 'solid-js'
-import { PostList } from '~/components/Posts/PostList'
-import { usePostCache } from '~/hooks/usePostCache'
+import { PostList } from '~/features/posts/components/PostList'
+import { usePostCache } from '~/features/posts/hooks/usePostCache'
 import { getPostsByTag } from '~/serverFn/posts'
 
 export const Route = createFileRoute('/posts/tags/$tag')({

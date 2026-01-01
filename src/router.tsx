@@ -3,7 +3,7 @@ import { createRouter } from '@tanstack/solid-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/solid-router-ssr-query'
 import { routeTree } from './routeTree.gen'
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary'
-import { NotFound } from './components/NotFound'
+import { NotFound } from './components/NotFound/NotFound'
 
 export function getRouter() {
     const queryClient = new QueryClient({

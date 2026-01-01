@@ -1,11 +1,7 @@
 import { useQuery } from '@tanstack/solid-query'
 import { createFileRoute, notFound } from '@tanstack/solid-router'
-import { createSignal, Suspense } from 'solid-js'
-import { Carousel } from '~/components/Carousel'
-import { Form } from '~/components/Forms/Form'
-import { FormProvider } from '~/components/Forms/FormContext'
-import { PostBlock } from '~/components/Posts/PostBlock'
-import { PostId } from '~/components/Posts/PostId'
+import { Suspense } from 'solid-js'
+import { PostId } from '~/features/posts/components/PostId'
 import { getPostFn } from '~/serverFn/posts'
 
 export const Route = createFileRoute('/posts/$postId')({

@@ -1,12 +1,11 @@
 import { type getGameFn } from "~/serverFn/games"
 import styles from "./GamePage.module.css"
-import { LogoLink } from "../LogoLink/LogoLink"
 import { For, Show } from "solid-js"
-import { YouTubeIframe } from "../YoutubeIframe"
 import { Link } from "@tanstack/solid-router"
-import { PhotoCardGrid } from "../CardLink/PhotoCardLink"
-import { Carousel } from "../Carousel"
-
+import { LogoLink } from "~/components/LogoLink/LogoLink"
+import { PhotoCardGrid } from "~/components/CardLink/PhotoCardLink"
+import { Carousel } from "~/components/Carousel/Carousel"
+import { YouTubeIframe } from "~/components/YoutubeIframe"
 
 type Props = {
     game: Awaited<ReturnType<typeof getGameFn>>
