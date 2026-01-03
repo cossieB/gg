@@ -30,7 +30,7 @@ export const getProfileFn = createServerFn().handler(async () => {
         headers
     })
     if (!session) throw redirect({ to: "/auth/signin" })
-    const user = (await userRepository.findById(session.user.id)).at(0);
+    const user = await userRepository.findById(session.user.id);
     if (!user) {
         return forceLogin()
     }

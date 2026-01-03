@@ -5,6 +5,7 @@ import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import * as postRepository from "~/repositories/postRepository"
 import { sanitizeText } from "~/utils/sanitizeText";
 import { getCurrentUser } from "./auth";
+import { AppError } from "~/utils/AppError";
 
 export const createPostFn = createServerFn({ method: "POST" })
     .middleware([verifiedOnlyMiddleware])
@@ -19,7 +20,7 @@ export const createPostFn = createServerFn({ method: "POST" })
         gameId: z.number().optional()
     }))
     .handler(async ({ data, context: { user } }) => {
-        if (data.text.length + data.media.length === 0) throw Response.json({ error: "Empty post" }, {status: 404})
+        if (data.text.length + data.media.length === 0) throw new AppError("Empty post", 404)
         const text = await sanitizeText(data.text)    
         const post = await postRepository.createPost({ ...data, userId: user.id, text })
         return {...post, user}

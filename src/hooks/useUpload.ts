@@ -18,21 +18,20 @@ export function useUpload(
 
     async function upload() {
         try {
-            const toUpload = state.files.filter(x => x)
-            if (toUpload.length === 0) return [];
+            if (state.files.length === 0) return [];
             setState('isUploading', true)
             const urls = await getUrls({data: {
                 paths: pathSegments,
-                files: toUpload.map(f =>  ({
+                files: state.files.map(f =>  ({
                     contentLength: f.file.size,
                     contentType: f.file.type,
                     filename: f.file.name
                 }))
             }})
-            if (urls.length != toUpload.length) 
+            if (urls.length != state.files.length) 
                 throw addToast({text: "Something went wrong. Please try again later", type: "error"})
 
-            const promises = toUpload.map((f, i) => uploadToSignedUrl(urls[i].signedUrl, f.file, {signal: abortController?.signal}))
+            const promises = state.files.map((f, i) => uploadToSignedUrl(urls[i].signedUrl, f.file, {signal: abortController?.signal}))
             await Promise.all(promises)
             return mergeObjectArrays(state.files, urls)
         } 

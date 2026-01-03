@@ -10,6 +10,8 @@ import { useMutation, useQueryClient } from '@tanstack/solid-query'
 import { Carousel } from '~/components/Carousel/Carousel'
 import { modifyCache } from '../utils/modifyCache'
 import { STORAGE_DOMAIN } from '~/utils/env'
+import { useToastContext } from '~/hooks/useToastContext'
+import { authClient } from '~/auth/authClient'
 
 type Props = {
     post: Awaited<ReturnType<typeof getPostFn>>
@@ -17,13 +19,17 @@ type Props = {
 
 export function PostBlock(props: Props) {
     const react = useServerFn(reactToPost);
+    const {addToast} = useToastContext()
     const queryClient = useQueryClient()
     const mutation = useMutation(() => ({
         mutationFn: react,
     }))
+    const session = authClient.useSession()
 
     function fn(reaction: "like" | "dislike") {
         return function () {
+            if (!session().data) return addToast({text: "Please login first", type: "warning"})
+            if (!session().data?.user.emailVerified) return addToast({text: "Please verify your account", type: "warning"})
             mutation.mutate({
                 data: {
                     postId: props.post.postId,
@@ -33,24 +39,21 @@ export function PostBlock(props: Props) {
                 onSuccess(data, variables, onMutateResult, context) {
                     modifyCache(queryClient, props.post.postId, reaction)
                 },
+                onError(error, variables, onMutateResult, context) {
+                    addToast({text: error.message, type: "error"})
+                },
             })
         }
-    }
-
-    const didLike = () => {
-        if (!props.post.yourReaction) return false
-        return props.post.yourReaction === "like"
-    }
-    const didDislike = () => {
-        if (!props.post.yourReaction) return false
-        return props.post.yourReaction === "dislike"
     }
 
     return (
         <div class={styles.container}>
             <div class={styles.user}>
+                <div>
                 <img src={STORAGE_DOMAIN + props.post.user.image} />
                 {props.post.user.displayUsername}
+                <Link to='/users/$username' params={{username: props.post.user.username!}} />
+                </div>
             </div>
 
             <div class={styles.content}>
@@ -89,13 +92,13 @@ export function PostBlock(props: Props) {
                     </div>
                     <div class={styles.react} >
                         <button onclick={fn('like')}
-                            classList={{ [styles.liked]: didLike() }}
+                            classList={{ [styles.liked]: props.post.yourReaction === "like" }}
                         >
                             <ThumbsUpIcon />
                         </button>
                         <button
                             onclick={fn('dislike')}
-                            classList={{ [styles.disliked]: didDislike() }}
+                            classList={{ [styles.disliked]: props.post.yourReaction === "dislike" }}
                         >
                             <ThumbsDownIcon />
                         </button>

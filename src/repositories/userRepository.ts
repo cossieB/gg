@@ -4,15 +4,17 @@ import { User } from "~/drizzle/models";
 import { users } from "~/drizzle/schema/auth";
 
 export async function findById(userId: string) {
-    return userQuery(eq(users.id, userId))
+    const user = await userQuery(eq(users.id, userId))
+    return user.at(0)
 }
 
 export async function findByUsername(username: string) {
-    return userQuery(eq(users.username, username))
+    const user = await userQuery(eq(users.username, username))
+    return user.at(0)
 }
 
 export async function updateUser(userId: string, user: Partial<User>) {
-    return db.update(users).set(user).where(eq(users.id, userId))
+    return db.update(users).set(user).where(eq(users.id, userId)).returning()
 }
 
 function userQuery(...where: SQL[]) {

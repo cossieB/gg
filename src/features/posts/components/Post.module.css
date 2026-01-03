@@ -29,22 +29,34 @@
 }
 
 .user {
-    display: flex;
-    flex-direction: row;
     width: 2.5rem;
     flex-shrink: 0;
     font-size: small;
     align-items: center;
     gap: 0.5rem;
-
+    position: relative;
+    
+    div {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;        
+    }
+    
     @media (width > 768px) {
-        flex-direction: column;
         width: 5rem;
+        div {
+            flex-direction: column;
+        }
     }
 
-    >img {
+    img {
         width: 100%;
         aspect-ratio: 1;
+    }
+    a {
+        position: absolute;
+        inset: 0;
     }
 }
 

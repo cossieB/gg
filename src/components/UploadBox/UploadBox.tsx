@@ -57,13 +57,18 @@ export function UploadBox(props: P) {
             {...divProps}
             class={styles.uploadBox}
             onDragOver={e => {
-                e.preventDefault()
+                e.preventDefault();
+                e.currentTarget.classList.add(styles.dragover)
             }}
             ondrop={async e => {
                 e.preventDefault()
+                e.currentTarget.classList.remove(styles.dragover)
                 if (!e.dataTransfer) return
                 const fileList = e.dataTransfer.files
                 processFiles(fileList)
+            }}
+            onDragLeave={e => {
+                e.currentTarget.classList.remove(styles.dragover)
             }}
         >
             <label>{props.label}</label>
@@ -71,6 +76,14 @@ export function UploadBox(props: P) {
                 <UploadIcon />
             </button>
             <span>MAX: {props.maxSize} MB</span>
+            <span>
+                {Object.entries(props.accept).reduce((acc, [key, bool]) => {
+                    if (bool) {
+                        acc.push(key);
+                    }
+                    return acc
+                }, [] as string[]).join(", ")}
+            </span>
             <input
                 ref={inputRef}
                 type="file"

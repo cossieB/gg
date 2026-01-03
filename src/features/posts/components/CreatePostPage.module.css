@@ -3,8 +3,24 @@
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
 
-    >img {
+    >div {
         aspect-ratio: 16/9;
-        object-fit: contain;
+        position: relative;
+        display: flex;
+        justify-content: center;
+
+        img {
+            object-fit: contain;
+            height: 100%;
+        }
+
+        button {
+            all: unset;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0.25rem;
+            background-color: red;
+        }
     }
 }

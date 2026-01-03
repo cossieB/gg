@@ -6,6 +6,7 @@ import { Formtextarea } from "./FormTextarea";
 import { FormSelect } from "./Select";
 import { TagsInput } from "./TagsInput";
 import { FormContext } from "./FormContext";
+import { SubmitBtn } from "./SubmitBtn";
 
 type Props = {
     children: JSXElement;
@@ -23,13 +24,10 @@ export function Form(props: Props) {
         <FormContext.Provider value={{ errors, setErrors }}>
             <form class={styles.form} onsubmit={props.onSubmit}>
                 {props.children}
-                <button disabled={props.isPending || props.disabled || allErrors().length > 0} type="submit">
-                    <Show when={props.isPending} fallback={"Submit"}>
-                        <div class={styles.dot} style={{ "--delay": "0.5s" }} />
-                        <div class={styles.dot} style={{ "--delay": "1s" }} />
-                        <div class={styles.dot} style={{ "--delay": "1.5s" }} />
-                    </Show>
-                </button>
+                <SubmitBtn 
+                    disabled={props.disabled || allErrors().length > 0}
+                    isPending={props.isPending}
+                />
             </form>
         </FormContext.Provider>
     )
@@ -39,3 +37,4 @@ Form.Input = FormInput
 Form.Textarea = Formtextarea
 Form.FormSelect = FormSelect
 Form.TagsInput = TagsInput
+
