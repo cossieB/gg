@@ -1,5 +1,4 @@
-.container {
-    width: min(90%, 1200px);
+.postContainer {
     margin: 1rem auto;
     display: flex;
     flex-direction: column;
@@ -129,14 +128,20 @@
     button {
         transition: color 200ms ease;
 
-        &:hover,
+        &:hover {
+            background-color: rgb(from var(--neon-green) r g b / 0.25);
+        }
         &.liked {
             color: var(--neon-green);
         }
 
-        &:is(button:nth-child(2)):hover,
-        &.disliked {
-            color: red
+        &:is(button:nth-child(2)) {
+            &:hover {
+                background-color: rgb(from red r g b / 0.25);
+            }
+            &.disliked {
+                color: red
+            }
         }
     }
 }
@@ -149,4 +154,9 @@
     span {
         font-size: small;
     }
+}
+
+.page {
+    width: min(90%, 1200px);
+    margin: 0 auto;
 }

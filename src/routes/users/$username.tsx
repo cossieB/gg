@@ -5,17 +5,19 @@ import { getUserByUsernameFn } from '~/serverFn/users'
 
 export const Route = createFileRoute('/users/$username')({
     component: RouteComponent,
-    loader: async ({params, context: {queryClient}}) => queryClient.ensureQueryData({
-        queryKey: ["users", params.username],
-        queryFn: () => getUserByUsernameFn({data: params.username})
-    })
+    loader: async ({ params, context: { queryClient } }) => {
+        await queryClient.ensureQueryData({
+            queryKey: ["users", params.username],
+            queryFn: () => getUserByUsernameFn({ data: params.username })
+        })
+    }
 })
 
 function RouteComponent() {
     const params = Route.useParams()
     const result = useQuery(() => ({
         queryKey: ["users", params().username],
-        queryFn: () => getUserByUsernameFn({data: params().username})
+        queryFn: () => getUserByUsernameFn({ data: params().username })
     }))
     return (
         <Suspense>

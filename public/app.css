@@ -3,7 +3,7 @@
   --bg-clr: light-dark(#eee, #121212);
   --txt-clr: light-dark(#333, #f1f1f1);
   --neon-pink: #F0F;
-  --neon-green: #00ff7f;
+  --neon-green: hsl(150 100% 50%);
   --content-bg: light-dark(rgb(230, 229, 229), hsl(0, 1%, 12%));
   --gray1: light-dark(hsl(0, 2%, 90%), hsl(0, 2%, 17%));
 }

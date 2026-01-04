@@ -7,7 +7,7 @@ import { getLoggedInUser } from '~/serverFn/users'
 export const Route = createFileRoute('/settings/profile')({
     component: RouteComponent,
     loader: async ({context}) => {
-        return context.queryClient.ensureQueryData({
+        await context.queryClient.ensureQueryData({
             queryKey: ["you"],
             queryFn: () => getLoggedInUser()
         })

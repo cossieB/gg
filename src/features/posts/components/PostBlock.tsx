@@ -8,7 +8,7 @@ import { Link } from '@tanstack/solid-router'
 import { useServerFn } from '@tanstack/solid-start'
 import { useMutation, useQueryClient } from '@tanstack/solid-query'
 import { Carousel } from '~/components/Carousel/Carousel'
-import { modifyCache } from '../utils/modifyCache'
+import { modifyPostCache } from '../utils/modifyCache'
 import { STORAGE_DOMAIN } from '~/utils/env'
 import { useToastContext } from '~/hooks/useToastContext'
 import { authClient } from '~/auth/authClient'
@@ -37,7 +37,7 @@ export function PostBlock(props: Props) {
                 }
             }, {
                 onSuccess(data, variables, onMutateResult, context) {
-                    modifyCache(queryClient, props.post.postId, reaction)
+                    modifyPostCache(queryClient, props.post.postId, reaction)
                 },
                 onError(error, variables, onMutateResult, context) {
                     addToast({text: error.message, type: "error"})
@@ -47,7 +47,7 @@ export function PostBlock(props: Props) {
     }
 
     return (
-        <div class={styles.container}>
+        <div class={styles.postContainer}>
             <div class={styles.user}>
                 <div>
                 <img src={STORAGE_DOMAIN + props.post.user.image} />

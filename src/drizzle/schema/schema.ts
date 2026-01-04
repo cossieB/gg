@@ -104,7 +104,9 @@ export const comments = pgTable("comments", {
     postId: integer("post_id").primaryKey().references(() => posts.postId, { onDelete: "cascade" }),
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
     text: varchar("text", { length: 255 }).notNull(),
-    replyTo: integer("reply_to")
+    replyTo: integer("reply_to"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    editedOn: timestamp("edited_on", { withTimezone: true }).notNull().$onUpdateFn(() => new Date())
 }, t => [
     check("comment_min_length", sql`LENGTH(${t.text}) > 1`),
     foreignKey({
@@ -125,9 +127,9 @@ export const postReactions = pgTable("post_reactions", {
 ])
 
 export const commentReactions = pgTable("comment_reactions", {
-    userId: uuid("user_id").notNull().references(() => users.id, {onDelete: 'cascade'}),
-    commentId: integer("comment_id").notNull().references(() => comments.commentId, {onDelete: "cascade"}),
-    date: timestamp("date", {withTimezone: true}).notNull().defaultNow(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+    commentId: integer("comment_id").notNull().references(() => comments.commentId, { onDelete: "cascade" }),
+    date: timestamp("date", { withTimezone: true }).notNull().defaultNow(),
     reaction: reactionType("reaction").notNull()
 }, t => [
     primaryKey({ columns: [t.commentId, t.userId] })
@@ -136,14 +138,14 @@ export const commentReactions = pgTable("comment_reactions", {
 export const media = pgTable("media", {
     key: text("key").primaryKey(),
     contentType: varchar("content_type").notNull(),
-    postId: integer("post_id").references(() => posts.postId, {onDelete: "set null"}),
-    gameId: integer("game_id").references(() => games.gameId, {onDelete: "set null"}),
+    postId: integer("post_id").references(() => posts.postId, { onDelete: "set null" }),
+    gameId: integer("game_id").references(() => games.gameId, { onDelete: "set null" }),
     metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({})
 })
 
 export const postTags = pgTable("post_tags", {
-    tagName: varchar("tag_name", {length: 25}).notNull().primaryKey(),
-    postId: integer("post_id").references(() => posts.postId, {onDelete: "cascade"}),
+    tagName: varchar("tag_name", { length: 25 }).notNull().primaryKey(),
+    postId: integer("post_id").references(() => posts.postId, { onDelete: "cascade" }),
 }, table => [
     primaryKey({ columns: [table.tagName, table.postId] })
 ])

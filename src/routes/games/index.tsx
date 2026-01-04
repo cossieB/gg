@@ -5,7 +5,7 @@ import { getGamesFn } from '~/serverFn/games'
 export const Route = createFileRoute('/games/')({
     component: RouteComponent,
     loader: async ({ context }) => {
-        return await context.queryClient.ensureQueryData({
+        await context.queryClient.ensureQueryData({
             queryKey: ["games"],
             queryFn: () => getGamesFn()
         })

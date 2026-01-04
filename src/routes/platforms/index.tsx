@@ -3,12 +3,11 @@ import { createFileRoute } from '@tanstack/solid-router'
 import { Suspense, For, createEffect } from 'solid-js'
 import { LogoLink } from '~/components/LogoLink/LogoLink'
 import { getPlatformsFn } from '~/serverFn/platforms'
-import styles from "~/lists.module.css"
 
 export const Route = createFileRoute('/platforms/')({
     component: RouteComponent,
     loader: async ({ context }) => {
-        return context.queryClient.ensureQueryData({
+        await context.queryClient.ensureQueryData({
             queryKey: ["platforms"],
             queryFn: () => getPlatformsFn()
         })

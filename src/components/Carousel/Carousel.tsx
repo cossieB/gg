@@ -24,7 +24,7 @@ export function Carousel(props: Props) {
     const { handleTouchEnd, handleTouchStart } = getTouchHandlers({ onSwipeLeft: next, onSwipeRight: prev })
     return (
         <div
-            data-func="carousel" class={styles.container}
+            data-func="carousel"
             onTouchEnd={handleTouchEnd}
             onTouchStart={handleTouchStart}
         >

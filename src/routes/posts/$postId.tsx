@@ -10,13 +10,16 @@ export const Route = createFileRoute('/posts/$postId')({
             postId: Number(params.postId)
         })
     },
-    loader: async ({ context, params: { postId }, }) => {
+    loader: async ({ context, params: { postId }, }) => {        
         if (Number.isNaN(postId)) throw notFound()
         return await context.queryClient.ensureQueryData({
             queryKey: ["posts", postId],
             queryFn: () => getPostFn({ data: postId })
         })
     },
+    head: ({ loaderData }) => ({
+        meta: loaderData ? [{ title: loaderData.title + " :: GG" }] : undefined,
+    }),
     component: RouteComponent,
 })
 

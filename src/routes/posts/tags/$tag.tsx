@@ -7,10 +7,12 @@ import { getPostsByTag } from '~/serverFn/posts'
 
 export const Route = createFileRoute('/posts/tags/$tag')({
     component: RouteComponent,
-    loader: async ({ context, params: { tag } }) => context.queryClient.ensureQueryData({
-        queryKey: ["posts", "byTag", tag],
-        queryFn: () => getPostsByTag({ data: tag })
-    })
+    loader: async ({ context, params: { tag } }) => {
+        await context.queryClient.ensureQueryData({
+            queryKey: ["posts", "byTag", tag],
+            queryFn: () => getPostsByTag({ data: tag })
+        })
+    }
 })
 
 function RouteComponent() {

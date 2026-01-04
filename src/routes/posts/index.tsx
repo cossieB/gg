@@ -8,11 +8,14 @@ import { getAllPostsFn } from '~/serverFn/posts'
 export const Route = createFileRoute('/posts/')({
     component: RouteComponent,
     loader: async ({ context }) => {
-        return context.queryClient.ensureQueryData({
+        await context.queryClient.ensureQueryData({
             queryKey: ["posts"],
             queryFn: () => getAllPostsFn()
         })
-    }
+    },
+    head: () => ({
+        meta: [{ title: "Posts :: GG" }],
+    }),
 })
 
 function RouteComponent() {
@@ -22,7 +25,7 @@ function RouteComponent() {
     }))
 
     usePostCache(result)
-    
+
     return (
         <Suspense>
             <PostList posts={result.data!} />

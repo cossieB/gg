@@ -9,13 +9,16 @@ export const Route = createFileRoute('/posts/create')({
         const user = await getCurrentUser();
         if (!user) throw redirect({ to: "/auth/signin", search: { redirect: "/create" }, reloadDocument: true })
     },
-    
+
     loader: async ({ context }) => {
         return await context.queryClient.ensureQueryData({
             queryKey: ["games"],
             queryFn: () => getGamesFn()
         })
     },
+    head: () => ({
+        meta: [{ title: "Create Post :: GG" }],
+    }),
 })
 
 function RouteComponent() {

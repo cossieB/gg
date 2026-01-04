@@ -7,7 +7,7 @@ import { getDevelopersFn } from '~/serverFn/developers'
 export const Route = createFileRoute('/developers/')({
     component: RouteComponent,
     loader: async ({ context }) => {
-        return context.queryClient.ensureQueryData({
+        await context.queryClient.ensureQueryData({
             queryKey: ["developers"],
             queryFn: () => getDevelopersFn()
         })

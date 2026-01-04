@@ -14,11 +14,15 @@ export const Route = createFileRoute('/developers/$developerId')({
             developerId: Number(params.developerId)
         })
     },
-    loader: async ({ context, params: { developerId } }) => {
-        if (Number.isNaN(developerId)) throw notFound()
+    loader: async ({ context, params }) => {
+        if (Number.isNaN(params.developerId)) throw notFound();
+        context.queryClient.ensureQueryData({
+            queryKey: ["games", "byDev", params.developerId],
+            queryFn: () => getGamesByDeveloperFn({ data: params.developerId })
+        })
         return await context.queryClient.ensureQueryData({
-            queryKey: ["developers", developerId],
-            queryFn: () => getDeveloperFn({ data: developerId })
+            queryKey: ["developers", params.developerId],
+            queryFn: () => getDeveloperFn({ data: params.developerId })
         })
     },
     head: ({ loaderData }) => ({
