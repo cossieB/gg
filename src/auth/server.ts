@@ -51,6 +51,13 @@ export const auth = betterAuth({
     },
     emailAndPassword: {
         enabled: true,
+        sendResetPassword: async (data, request) => {
+            void emailService.sendMail({
+                to: data.user.email,
+                subject: "Reset your password",
+                text: `Click the link to reset your password: ${data.url}`
+            })
+        },        
     },
     emailVerification: {
         sendOnSignUp: true,

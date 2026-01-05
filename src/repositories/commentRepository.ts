@@ -1,7 +1,6 @@
 import { InferInsertModel, SQL, and, count, desc, eq, getColumns, isNull, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
 import { commentReactions, comments, users } from "~/drizzle/schema";
-import { sleep } from "~/lib/sleep";
 
 export async function addComment(comment: InferInsertModel<typeof comments>) {
     return db.insert(comments).values(comment).returning()

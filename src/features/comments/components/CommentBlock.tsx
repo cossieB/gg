@@ -11,7 +11,7 @@ import { useReactToComment } from "../hooks/useReactToComment";
 import { useReplyToComment } from "../hooks/useReplyToComment";
 import { MenuPopover } from "~/components/Popover/MenuPopover";
 import { useDeleteComment } from "../hooks/useDeleteComment";
-import { ConfirmPopover, ConfirmPopoverWithButton } from "~/components/Popover/Popover";
+import { ConfirmPopoverWithButton } from "~/components/Popover/Popover";
 import { authClient } from "~/auth/authClient";
 
 type Props = {

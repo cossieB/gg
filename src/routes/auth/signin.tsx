@@ -66,6 +66,9 @@ function RouteComponent() {
                     value={input.password}
                     type="password"
                 />
+                <aside>
+                    Forgot your password? <Link to='/auth/reset'>Click here to reset it</Link>
+                </aside>
             </Form>
         </div>
     )

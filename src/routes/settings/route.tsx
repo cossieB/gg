@@ -9,7 +9,7 @@ const getSessionFn = createServerFn()
     .inputValidator((str: string) => str)
     .handler(async ({ data }) => {
         const id = await getCurrentUser()
-        if (!id) throw redirect({ to: "/auth/signin", search: { redirect: data }, reloadDocument: true })
+        if (!id) throw redirect({ to: "/auth/signin", search: { redirect: data },  })
     })
 
 export const Route = createFileRoute('/settings')({

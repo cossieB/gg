@@ -74,6 +74,6 @@ export const forceLogin = createServerFn()
                     autoFade: false
                 }]
             },
-            reloadDocument: true
+            
         })
     })

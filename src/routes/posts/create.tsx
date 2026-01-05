@@ -7,7 +7,7 @@ export const Route = createFileRoute('/posts/create')({
     component: RouteComponent,
     beforeLoad: async () => {
         const user = await getCurrentUser();
-        if (!user) throw redirect({ to: "/auth/signin", search: { redirect: "/create" }, reloadDocument: true })
+        if (!user) throw redirect({ to: "/auth/signin", search: { redirect: "/create" }, })
     },
 
     loader: async ({ context }) => {
