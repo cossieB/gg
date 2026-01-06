@@ -19,13 +19,13 @@ export function GamePage(props: Props) {
             <div class={styles.header}>
                 <h1 class={`${styles.title}`}>{props.game.title}</h1>
                 <div class={styles.hero}>
-                    <img src={props.game.banner} alt="" />
+                    <img src={STORAGE_DOMAIN + props.game.banner} alt="" />
                 </div>
                 <div class={`${styles.cover} cutout-wrapper`}>
                     <img
-                        style={{ "view-transition-name": "gameId"+props.game.gameId }}
+                        style={{ "view-transition-name": "gameId" + props.game.gameId }}
                         class={`cutout`}
-                        src={props.game.cover} alt=""
+                        src={STORAGE_DOMAIN + props.game.cover} alt=""
                     />
                 </div>
             </div>
@@ -38,7 +38,7 @@ export function GamePage(props: Props) {
                         href="developer"
                         item={{
                             id: props.game.developer.developerId,
-                            logo: props.game.developer.logo ?? "",
+                            logo: STORAGE_DOMAIN + props.game.developer.logo,
                             name: props.game.developer.name
                         }}
                         className={styles.company}
@@ -47,7 +47,7 @@ export function GamePage(props: Props) {
                         href="publisher"
                         item={{
                             id: props.game.publisher.publisherId,
-                            logo: props.game.publisher.logo ?? "",
+                            logo: STORAGE_DOMAIN + props.game.publisher.logo,
                             name: props.game.publisher.name
                         }}
                         className={styles.company}
@@ -60,7 +60,7 @@ export function GamePage(props: Props) {
                                     href="platform"
                                     item={{
                                         id: platform.platformId,
-                                        logo: platform.logo ?? "",
+                                        logo: STORAGE_DOMAIN + platform.logo,
                                         name: platform.name
                                     }}
                                 />
@@ -88,7 +88,7 @@ export function GamePage(props: Props) {
                     <PhotoCardGrid
                         arr={props.game.actors}
                         getLabel={actor => actor.name}
-                        getPic={actor => actor.photo ?? ""}
+                        getPic={actor => STORAGE_DOMAIN + actor.photo}
                         getSublabel={actor => actor.character}
                         to="/actors/$actorId"
                         getParam={actor => ({ actorId: actor.actorId })}
@@ -117,6 +117,32 @@ function ReleaseDate(props: { date: Date }) {
             <span> {props.date.getDate()} </span>
             <span> {props.date.toLocaleString("default", { month: "long" })} </span>
             <span> {props.date.getFullYear()} </span>
+        </div>
+    )
+}
+
+type P = {
+    label: string
+    banner: string
+    type: string
+    identifier: string | number
+    image: string
+}
+
+export function HeroHeader(props: P) {
+    return (
+        <div class={styles.header}>
+            <h1 class={`${styles.title}`}>{props.label}</h1>
+            <div class={styles.hero}>
+                <img src={props.banner} alt="" />
+            </div>
+            <div class={`${styles.cover} cutout-wrapper`}>
+                <img
+                    style={{ "view-transition-name": props.type + props.identifier }}
+                    class={`cutout`}
+                    src={props.image} alt=""
+                />
+            </div>
         </div>
     )
 }

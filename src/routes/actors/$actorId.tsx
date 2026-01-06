@@ -5,6 +5,7 @@ import { CompanyPage } from '~/components/CompanyPage/CompanyPage'
 import { GamesList } from '~/features/games/components/GamesList'
 import { getActorFn } from '~/serverFn/actors'
 import { getGamesByActorFn } from '~/serverFn/games'
+import { STORAGE_DOMAIN } from '~/utils/env'
 
 
 export const Route = createFileRoute('/actors/$actorId')({
@@ -42,7 +43,7 @@ function RouteComponent() {
             <Suspense>
                 <CompanyPage
                     id={devResult.data!.actorId}
-                    logo={devResult.data!.photo}
+                    logo={STORAGE_DOMAIN + devResult.data!.photo}
                     name={devResult.data!.name}
                     summary={devResult.data!.bio}
                     type='actor'

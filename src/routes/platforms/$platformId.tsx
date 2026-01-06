@@ -6,6 +6,7 @@ import { GamesList } from '~/features/games/components/GamesList'
 import { NotFound } from '~/components/NotFound/NotFound'
 import { getGamesByPlatformFn } from '~/serverFn/games'
 import { getPlatformFn } from '~/serverFn/platforms'
+import { STORAGE_DOMAIN } from '~/utils/env'
 
 export const Route = createFileRoute('/platforms/$platformId')({
     component: RouteComponent,
@@ -43,7 +44,7 @@ function RouteComponent() {
             <Suspense>
                 <CompanyPage
                     id={platformResult.data!.platformId}
-                    logo={platformResult.data!.logo}
+                    logo={STORAGE_DOMAIN + platformResult.data!.logo}
                     name={platformResult.data!.name}
                     summary={platformResult.data!.summary}
                     type="platform"

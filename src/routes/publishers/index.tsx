@@ -4,6 +4,7 @@ import { Suspense, For, createEffect } from 'solid-js'
 import { LogoLink } from '~/components/LogoLink/LogoLink'
 import { getPublishersFn } from '~/serverFn/publishers'
 import styles from "~/lists.module.css"
+import { STORAGE_DOMAIN } from '~/utils/env'
 
 export const Route = createFileRoute('/publishers/')({
     component: RouteComponent,
@@ -42,7 +43,7 @@ function RouteComponent() {
                             href='publisher'
                             item={{
                                 id: pub.publisherId,
-                                logo: pub.logo,
+                                logo: STORAGE_DOMAIN + pub.logo,
                                 name: pub.name
                             }}
                         />

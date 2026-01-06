@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/solid-router'
 import { Suspense, For, createEffect } from 'solid-js'
 import { LogoLink } from '~/components/LogoLink/LogoLink'
 import { getPlatformsFn } from '~/serverFn/platforms'
+import { STORAGE_DOMAIN } from '~/utils/env'
 
 export const Route = createFileRoute('/platforms/')({
     component: RouteComponent,
@@ -41,7 +42,7 @@ function RouteComponent() {
                             href='platform'
                             item={{
                                 id: platform.platformId,
-                                logo: platform.logo,
+                                logo: STORAGE_DOMAIN + platform.logo,
                                 name: platform.name
                             }}
                         />

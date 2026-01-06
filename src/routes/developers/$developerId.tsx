@@ -6,6 +6,7 @@ import { GamesList } from '~/features/games/components/GamesList'
 import { NotFound } from '~/components/NotFound/NotFound'
 import { getDeveloperFn } from '~/serverFn/developers'
 import { getGamesByDeveloperFn } from '~/serverFn/games'
+import { STORAGE_DOMAIN } from '~/utils/env'
 
 export const Route = createFileRoute('/developers/$developerId')({
     component: RouteComponent,
@@ -43,7 +44,7 @@ function RouteComponent() {
             <Suspense>
                 <CompanyPage
                     id={devResult.data!.developerId}
-                    logo={devResult.data!.logo}
+                    logo={STORAGE_DOMAIN + devResult.data!.logo}
                     name={devResult.data!.name}
                     summary={devResult.data!.summary}
                     type='developer'

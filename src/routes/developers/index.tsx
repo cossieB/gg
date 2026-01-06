@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/solid-router'
 import { createEffect, For, Suspense } from 'solid-js'
 import { LogoLink } from '~/components/LogoLink/LogoLink'
 import { getDevelopersFn } from '~/serverFn/developers'
+import { STORAGE_DOMAIN } from '~/utils/env'
 
 export const Route = createFileRoute('/developers/')({
     component: RouteComponent,
@@ -42,7 +43,7 @@ function RouteComponent() {
                             href='developer'
                             item={{
                                 id: dev.developerId,
-                                logo: dev.logo,
+                                logo: STORAGE_DOMAIN + dev.logo,
                                 name: dev.name
                             }}
                         />

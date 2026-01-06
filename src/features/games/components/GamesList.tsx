@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/solid-query"
 import type { getGamesFn } from "~/serverFn/games"
 import { PhotoCardGrid } from "../../../components/CardLink/PhotoCardLink"
 import { useGamesQuery } from "~/features/games/hooks/useGameQuery"
+import { STORAGE_DOMAIN } from "~/utils/env"
 
 type Opts = {
     queryKey: readonly ["games", ...(string | number)[]],
@@ -14,7 +14,7 @@ export function GamesList(props: {opts: Opts}) {
     return <PhotoCardGrid
         arr={result.data!}
         getLabel={game => game.title}
-        getPic={game => game.cover}
+        getPic={game => STORAGE_DOMAIN + game.cover}
         getParam={game => ({
             gameId: game.gameId
         })}

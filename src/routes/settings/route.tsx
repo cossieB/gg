@@ -8,8 +8,8 @@ import { checkSessionFn, getCurrentUser } from '~/serverFn/auth'
 const getSessionFn = createServerFn()
     .inputValidator((str: string) => str)
     .handler(async ({ data }) => {
-        const id = await getCurrentUser()
-        if (!id) throw redirect({ to: "/auth/signin", search: { redirect: data },  })
+        const user = await getCurrentUser()
+        if (!user) throw redirect({ to: "/auth/signin", replace: true, search: { redirect: data },  })
     })
 
 export const Route = createFileRoute('/settings')({

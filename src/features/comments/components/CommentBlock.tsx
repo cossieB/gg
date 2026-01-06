@@ -104,7 +104,7 @@ export function CommentBlock(props: Props) {
                             <ConfirmPopoverWithButton
                                 popover={{
                                     id: `del-comment-${props.comment.commentId}`,
-                                    text: "Delete Comment?" + props.comment.text,
+                                    text: "Delete Comment?",
                                     onConfirm: () => deleteMutation.mutate({
                                         data: {
                                             commentId: props.comment.commentId
@@ -112,7 +112,7 @@ export function CommentBlock(props: Props) {
                                     })
                                 }}
                                 button={{
-                                    children: "Delete"+ props.comment.text
+                                    children: "Delete"
                                 }}
                             />
                         </li>

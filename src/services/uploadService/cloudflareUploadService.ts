@@ -15,8 +15,7 @@ const S3 = new S3Client({
 });
 
 export function uploadFromServer(file: File, ...pathSegments: string[]) {
-    const ext = file.name.slice(file.name.lastIndexOf("."))
-    const key = join(...pathSegments, crypto.randomUUID() + ext)
+    const key = join(...pathSegments, file.name)
     const upload = new Upload({
         client: S3,
         params: {
