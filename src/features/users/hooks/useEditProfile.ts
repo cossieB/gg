@@ -4,7 +4,6 @@ import { createStore } from "solid-js/store";
 import { useAbortController } from "~/hooks/useAbortController";
 import { useToastContext } from "~/hooks/useToastContext";
 import { useUpload } from "~/hooks/useUpload";
-import { objectDifference } from "~/lib/objectDifference";
 import { getLoggedInUser, updateCurrentUser } from "~/serverFn/users";
 
 export function useEditProfile(props: { user: Awaited<ReturnType<typeof getLoggedInUser>> }) {
@@ -41,10 +40,7 @@ export function useEditProfile(props: { user: Awaited<ReturnType<typeof getLogge
                 ...newBanner && { banner: newBanner.key }
             })
 
-            const obj = objectDifference(user, props.user);
-
-            if (Object.keys(obj).length === 0) return addToast({ text: "Nothing to update", type: "warning" })
-            await mutation.mutateAsync({ data: obj, signal: abortController.signal },)
+            await mutation.mutateAsync({ data: user, signal: abortController.signal },)
         }
         catch (error) {
             console.error(error)

@@ -7,7 +7,6 @@ import { SITE_URL, STORAGE_DOMAIN } from "~/utils/env";
 import styles from "./UserPage.module.css"
 import { Link } from "@tanstack/solid-router";
 import { validateUrl } from "~/lib/validateUrl";
-import { getPostsFn } from "~/serverFn/posts";
 
 type Props = {
     user: NonNullable<Awaited<ReturnType<typeof getUserByUsernameFn>>>
@@ -59,6 +58,7 @@ export function UserPage(props: Props) {
                                         src={`${validateUrl(link)?.origin}/favicon.ico`}
                                         onerror={e => e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/8/84/Icons8-question-mark-52.png"}
                                     />
+                                    <a href={link} target="_blank" rel="noreferrer">{link}</a>
                                 </li>
                             }
                         </For>

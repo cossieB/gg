@@ -3,9 +3,9 @@ import { createServerFn } from "@tanstack/solid-start";
 import z from "zod";
 import * as userRepository from "~/repositories/userRepository"
 import { forceLogin, getCurrentUser as getCurrentUser } from "./auth";
-import assert from "node:assert";
-import { authedMiddleware, verifiedOnlyMiddleware } from "~/middleware/authorization";
+import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import { AppError } from "~/utils/AppError";
+import * as uploadService from "~/services/uploadService/cloudflareUploadService"
 
 export const getLoggedInUser = createServerFn()
     .handler(async () => {
@@ -44,14 +44,19 @@ export const updateCurrentUser = createServerFn({ method: "POST" })
         image: z.string().optional(),
         banner: z.string().optional(),
         dob: z.iso.date().nullish(),
-        location: z.string().max(100).nullish()
+        location: z.string().max(100).nullish(),
+        links: z.string().array().transform(arr => arr.slice(0, 5)).optional()
     }))
     .handler(async ({ data, context: { user } }) => {
 
         if (Object.keys(data).length === 0) throw new AppError("Nothing to update", 400)
 
         try {
-            const u = await userRepository.updateUser(user.id, data);
+            const old = (await userRepository.updateUser(user.id, data))[0]
+            if (data.banner)
+                uploadService.deleteObject(old.oldBanner)
+            if (data.image)
+                uploadService.deleteObject(old.oldAvatar)
             return new Response(null, { status: 200 })
         }
         catch (error) {

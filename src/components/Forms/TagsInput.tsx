@@ -7,6 +7,7 @@ type Props = {
     tagLength?: number
     tags: Accessor<string[]>
     setTags: Setter<string[]>
+    label?: string
 }
 
 export function TagsInput(initialProps: Props) {
@@ -60,7 +61,7 @@ export function TagsInput(initialProps: Props) {
                 value={input()}
                 oninput={handleInput}
                 type="text"
-                placeholder="Add tag..."
+                placeholder={props.label ?? "Add tag..."}
                 disabled={isDisabled()}
                 maxLength={props.tagLength}
             />
