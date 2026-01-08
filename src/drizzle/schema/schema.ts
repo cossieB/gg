@@ -1,5 +1,5 @@
 import { getColumns, sql } from "drizzle-orm";
-import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, pgView, jsonb, check, uuid, foreignKey } from "drizzle-orm/pg-core";
+import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, pgView, jsonb, check, uuid, foreignKey, date } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
 export const developers = pgTable("developers", {
@@ -30,7 +30,7 @@ export const games = pgTable("games", {
     summary: text("summary").notNull().default(""),
     developerId: integer("developer_id").notNull().references(() => developers.developerId),
     publisherId: integer("publisher_id").notNull().references(() => publishers.publisherId),
-    releaseDate: timestamp("release_date", { mode: "date", withTimezone: true }).notNull(),
+    releaseDate: date("release_date").notNull(),
     cover: text("cover").notNull(),
     banner: text("banner").notNull(),
     trailer: text("trailer"),
@@ -42,7 +42,7 @@ export const platforms = pgTable("platforms", {
     platformId: integer("platform_id").primaryKey().generatedAlwaysAsIdentity(),
     name: varchar("name").notNull(),
     logo: text("logo").notNull(),
-    releaseDate: timestamp("release_date", { withTimezone: true }),
+    releaseDate: date("release_date").notNull(),
     summary: text("summary").notNull().default(""),
     dateAdded: timestamp("date_added", { withTimezone: true }).notNull().defaultNow(),
     dateModified: timestamp("date_modified", { withTimezone: true }),

@@ -1,30 +1,24 @@
 import { useQuery } from '@tanstack/solid-query'
-import { createFileRoute, notFound } from '@tanstack/solid-router'
+import { createFileRoute, Link, notFound } from '@tanstack/solid-router'
 import { Suspense } from 'solid-js'
 import { CompanyPage } from '~/components/CompanyPage/CompanyPage'
 import { GamesList } from '~/features/games/components/GamesList'
 import { NotFound } from '~/components/NotFound/NotFound'
 import { getGamesByPlatformFn } from '~/serverFn/games'
-import { getPlatformFn } from '~/serverFn/platforms'
 import { STORAGE_DOMAIN } from '~/utils/env'
+import { platformQueryOpts } from '~/features/platforms/utils/platformQueryOpts'
+import { AdminWrapper } from '~/components/AdminWrapper'
 
-export const Route = createFileRoute('/platforms/$platformId')({
+export const Route = createFileRoute('/platforms/$platformId/')({
     component: RouteComponent,
-    params: {
-        parse: params => ({
-            platformId: Number(params.platformId)
-        })
-    },
+
     loader: async ({ context, params }) => {
         if (Number.isNaN(params.platformId)) throw notFound()
         context.queryClient.ensureQueryData({
             queryKey: ["games", "byPlatform", params.platformId],
             queryFn: () => getGamesByPlatformFn({ data: params.platformId })
         })
-        return await context.queryClient.ensureQueryData({
-            queryKey: ["platforms", params.platformId],
-            queryFn: () => getPlatformFn({ data: params.platformId })
-        })
+        return await context.queryClient.ensureQueryData(platformQueryOpts(params.platformId))
     },
     head: ({ loaderData }) => ({
         meta: loaderData ? [{ title: loaderData.name + " :: GG" }] : undefined,
@@ -34,13 +28,13 @@ export const Route = createFileRoute('/platforms/$platformId')({
 
 function RouteComponent() {
     const params = Route.useParams()
-    const platformResult = useQuery(() => ({
-        queryKey: ["platforms", params().platformId],
-        queryFn: () => getPlatformFn({ data: params().platformId })
-    }))
+    const platformResult = useQuery(() => platformQueryOpts(params().platformId))
 
     return (
         <>
+            <AdminWrapper>
+                <Link from='/platforms/$platformId' to='./edit'>Edit</Link>
+            </AdminWrapper>
             <Suspense>
                 <CompanyPage
                     id={platformResult.data!.platformId}

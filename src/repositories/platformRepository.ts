@@ -1,4 +1,6 @@
+import { eq, InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { db } from "~/drizzle/db";
+import { platforms } from "~/drizzle/schema";
 
 export function findAll() {
     return db.query.platformsView.findMany()
@@ -10,4 +12,12 @@ export function findById(platformId: number) {
             platformId
         }
     })
+}
+
+export function createPlatform(platform: InferInsertModel<typeof platforms>) {
+    return db.insert(platforms).values(platform).returning()
+}
+
+export function editPlatform(platformId: number, data: Partial<InferSelectModel<typeof platforms>>) {
+    return db.update(platforms).set(data).where(eq(platforms.platformId, platformId))
 }

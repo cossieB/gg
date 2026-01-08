@@ -5,7 +5,6 @@ import { createDeveloperFn, editDeveloperFn, type getDeveloperFn } from "~/serve
 import { useUpload } from "~/hooks/useUpload";
 import { countryList } from "~/utils/countryList";
 import { ContentEditable } from "~/components/Forms/ContentEditable";
-import { STORAGE_DOMAIN } from "~/utils/env";
 import { useServerFn } from "@tanstack/solid-start";
 import { useMutation, useQueryClient } from "@tanstack/solid-query";
 import styles from "~/styles/F.module.css"
