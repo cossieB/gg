@@ -4,7 +4,7 @@ import { createStore } from "solid-js/store"
 import { useToastContext } from "~/hooks/useToastContext"
 import { useUpload } from "~/hooks/useUpload"
 import { createPlatformFn, editPlatformFn, getPlatformFn } from "~/serverFn/platforms"
-import { platformQueryOpts } from "../utils/platformQueryOpts"
+import { platformQueryOpts, platformsQueryOpts } from "../utils/platformQueryOpts"
 import { Form } from "~/components/Forms/Form"
 import { ContentEditable } from "~/components/Forms/ContentEditable"
 import { UploadBoxWithPreview } from "~/components/UploadBox/UploadBoxWithPreview"
@@ -42,6 +42,7 @@ export function PlatformForm(props: { platform?: Platform }) {
                 onSuccess(data, variables, onMutateResult, context) {
                     addToast({ text: "Successfully edited platform, " + platform.platformId, type: "info" })
                     queryClient.setQueryData(platformQueryOpts(platform.platformId).queryKey, platform)
+                    queryClient.invalidateQueries(platformsQueryOpts())
                 },
                 onError(error, variables, onMutateResult, context) {
                     addToast({ text: error.message, type: "error" })

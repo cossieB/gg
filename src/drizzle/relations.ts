@@ -64,5 +64,15 @@ export const relations = defineRelations(schema, (r) => ({
 			from: r.comments.replyTo,
 			to: r.comments.commentId
 		})
-	}
+	},
+	actors: {
+		characters: r.many.gameActors({
+			from: r.actors.actorId,
+			to: r.gameActors.actorId
+		}),
+		games: r.many.games({
+			from: r.actors.actorId.through(r.gameActors.actorId),
+			to: r.games.gameId.through(r.gameActors.gameId)
+		})
+	},
 }))

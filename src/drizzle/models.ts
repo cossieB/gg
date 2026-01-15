@@ -9,3 +9,5 @@ export type Actor = InferSelectModel<typeof actors>
 export type Platform = InferSelectModel<typeof platforms>
 export type User = InferSelectModel<typeof users>
 export type Post = InferSelectModel<typeof posts>
+
+export type RoleType = "player character" | "major character" | "minor character"

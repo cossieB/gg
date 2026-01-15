@@ -7,6 +7,9 @@ import { platformsQueryOpts } from '~/features/platforms/utils/platformQueryOpts
 
 export const Route = createFileRoute('/admin/platforms/')({
     component: RouteComponent,
+    loader: (async ({ context }) => {
+        await context.queryClient.ensureQueryData(platformsQueryOpts())
+    })    
 })
 
 function RouteComponent() {
@@ -22,7 +25,7 @@ function RouteComponent() {
                 }, {
                     field: 'dateModified'
                 }, {
-                    cellRenderer: (props: ICellRendererParams) => <Link to='/admin/publishers/$publisherId/edit' params={{ publisherId: props.data.publisherId }} >Edit</Link>
+                    cellRenderer: (props: ICellRendererParams) => <Link to='/admin/platforms/$platformId/edit' params={{ platformId: props.data.platformId }} >Edit</Link>
                 }]}
             />
         </Suspense>

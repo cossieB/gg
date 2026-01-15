@@ -17,7 +17,8 @@ export function GridWrapper<TData = any>(props: AgGridSolidProps<TData>) {
     return (
         <div style={{ height: "100%" }} class="ag-theme-alpine-dark">
             <ClientOnly>
-            <AgGridSolid {...props} />
+                {/* @ts-expect-error */}
+                <AgGridSolid {...props} />
             </ClientOnly>
         </div>
     )

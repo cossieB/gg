@@ -1,8 +1,7 @@
-import { HouseIcon, Dice5Icon, CodeIcon, BriefcaseBusiness, CirclePlus } from "lucide-solid";
 import { JSXElement, Show } from "solid-js";
-import { NavItem } from "../MainLayout/NavItem";
 import styles from "./AdminLayout.module.css"
 import { Link } from "@tanstack/solid-router";
+import { ToastContainer } from "../Toast/Toast";
 
 export function AdminLayout(props: { children: JSXElement }) {
     return (
@@ -11,6 +10,7 @@ export function AdminLayout(props: { children: JSXElement }) {
             <main>
                 {props.children}
             </main>
+            <ToastContainer />
         </div>
     )
 }

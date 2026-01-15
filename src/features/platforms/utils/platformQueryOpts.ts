@@ -11,6 +11,6 @@ export function platformQueryOpts(platformId: number) {
 export function platformsQueryOpts() {
     return queryOptions({
         queryKey: ["platforms"],
-        queryFn: () => getPlatformsFn()
+        queryFn: () => getPlatformsFn(),
     })
 }

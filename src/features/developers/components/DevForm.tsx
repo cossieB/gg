@@ -7,7 +7,7 @@ import { ContentEditable } from "~/components/Forms/ContentEditable";
 import { useServerFn } from "@tanstack/solid-start";
 import { useMutation, useQueryClient } from "@tanstack/solid-query";
 import { useToastContext } from "~/hooks/useToastContext";
-import { developerQueryOpts } from "../utils/developerQueryOpts";
+import { developerQueryOpts, developersQueryOpts } from "../utils/developerQueryOpts";
 import { UploadBoxWithPreview } from "~/components/UploadBox/UploadBoxWithPreview";
 
 type Developer = Awaited<ReturnType<typeof getDeveloperFn>>
@@ -40,6 +40,7 @@ export function DevForm(props: { developer?: Developer }) {
                 onSuccess(data, variables, onMutateResult, context) {
                     addToast({ text: "Successfully edited developer, " + developer.developerId, type: "info" })
                     queryClient.setQueryData(developerQueryOpts(developer.developerId).queryKey, developer)
+                    queryClient.invalidateQueries(developersQueryOpts())
                 },
                 onError(error, variables, onMutateResult, context) {
                     addToast({ text: "Failed", type: "error" })
@@ -50,6 +51,7 @@ export function DevForm(props: { developer?: Developer }) {
             onSuccess(data, variables, onMutateResult, context) {
                 addToast({ text: "Successfully created developer, " + data.developerId, type: "info" })
                 queryClient.setQueryData(developerQueryOpts(data.developerId).queryKey, data)
+                queryClient.invalidateQueries(developersQueryOpts())
             },
             onError(error, variables, onMutateResult, context) {
                 addToast({ text: error.message, type: "error" })
@@ -83,12 +85,9 @@ export function DevForm(props: { developer?: Developer }) {
                     }}
                 />
                 <Form.FormSelect
-                    field={"country"}
                     list={countryList}
-                    required
                     selected={developer.country}
-                    setter={val => setDeveloper({ country: val?.value as string | undefined })}
-                    label="Country"
+                    setSelected={country => setDeveloper({ country })}
                 />
                 <Form.Input<typeof developer>
                     field="location"

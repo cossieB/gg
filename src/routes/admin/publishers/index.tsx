@@ -7,6 +7,9 @@ import { publishersQueryOpts } from '~/features/publishers/utils/publisherQueryO
 
 export const Route = createFileRoute('/admin/publishers/')({
   component: RouteComponent,
+    loader: (async ({ context }) => {
+        await context.queryClient.ensureQueryData(publishersQueryOpts())
+    })  
 })
 
 function RouteComponent() {

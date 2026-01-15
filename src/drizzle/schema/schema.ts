@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, jsonb, check, uuid, foreignKey, date } from "drizzle-orm/pg-core";
+import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, jsonb, check, uuid, foreignKey, date, unique } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
 export const developers = pgTable("developers", {
@@ -67,12 +67,13 @@ export const genres = pgTable("genres", {
 export const roleType = pgEnum('role_type', ["player character", "major character", "minor character"])
 
 export const gameActors = pgTable("game_actors", {
+    appearanceId: integer("appearance_id").primaryKey().generatedAlwaysAsIdentity(),
     gameId: integer("game_id").notNull().references(() => games.gameId, { onDelete: "cascade" }),
     actorId: integer("actor_id").notNull().references(() => actors.actorId, { onDelete: "cascade" }),
     character: varchar().notNull(),
     roleType: roleType("role_type").notNull().default("major character")
 }, (table) => [
-    primaryKey({ columns: [table.gameId, table.actorId] })
+    unique().on(table.gameId, table.actorId)
 ]);
 
 export const gamePlatforms = pgTable("game_platforms", {

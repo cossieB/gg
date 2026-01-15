@@ -7,6 +7,9 @@ import { developersQueryOpts } from '~/features/developers/utils/developerQueryO
 
 export const Route = createFileRoute('/admin/developers/')({
     component: RouteComponent,
+    loader: (async ({ context }) => {
+        await context.queryClient.ensureQueryData(developersQueryOpts())
+    })    
 })
 
 function RouteComponent() {

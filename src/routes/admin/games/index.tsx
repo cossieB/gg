@@ -1,16 +1,20 @@
-import { useQuery } from '@tanstack/solid-query'
 import { createFileRoute, Link } from '@tanstack/solid-router'
 import { ICellRendererParams } from 'ag-grid-community'
 import { Suspense } from 'solid-js'
 import { GridWrapper } from '~/components/AdminTable/GridWrapper'
+import { useGamesQuery } from '~/features/games/hooks/useGameQuery'
 import { gamesQueryOpts } from '~/features/games/utils/gameQueryOpts'
 
 export const Route = createFileRoute('/admin/games/')({
     component: RouteComponent,
+    loader: (async ({ context }) => {
+        await context.queryClient.ensureQueryData(gamesQueryOpts())
+    })    
 })
 
 function RouteComponent() {
-    const result = useQuery(() => gamesQueryOpts())
+
+    const result = useGamesQuery()
     return (
         <Suspense>
             <GridWrapper

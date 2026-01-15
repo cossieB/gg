@@ -18,7 +18,7 @@ export function FormInput<T>(props: Props<T>) {
     const err = () => errors[props.field]
 
     return (
-        <div class={styles.formControl}>
+        <div role="group" class={styles.formControl}>
             <input
                 {...rest}
                 placeholder=" "
@@ -50,7 +50,7 @@ export function FormInput<T>(props: Props<T>) {
 
 export function StandaloneInput(props: Props) {
     return (
-        <div class={styles.formControl}>
+        <div role="group" class={styles.formControl}>
             <input onchange={e => props.setter(e.currentTarget.value)} value={props.value} />
             <label > {props.label} </label>
         </div>

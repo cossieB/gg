@@ -9,7 +9,7 @@ import { useUpload } from "~/hooks/useUpload";
 import { createPublisherFn, editPublisherFn, getPublisherFn } from "~/serverFn/publishers";
 import { countryList } from "~/utils/countryList";
 import { mediaSrc } from "~/utils/mediaSrc";
-import { publisherQueryOpts } from "../utils/publisherQueryOpts";
+import { publisherQueryOpts, publishersQueryOpts } from "../utils/publisherQueryOpts";
 import { UploadBoxWithPreview } from "~/components/UploadBox/UploadBoxWithPreview";
 
 type Publisher = Awaited<ReturnType<typeof getPublisherFn>>
@@ -46,6 +46,7 @@ export function PubForm(props: { publisher?: Publisher }) {
                 onSuccess(data, variables, onMutateResult, context) {
                     addToast({ text: "Successfully edited publisher, " + publisher.publisherId, type: "info" })
                     queryClient.setQueryData(publisherQueryOpts(publisher.publisherId).queryKey, publisher)
+                    queryClient.invalidateQueries(publishersQueryOpts())
                 },
                 onError(error, variables, onMutateResult, context) {
                     addToast({ text: "Failed", type: "error" })
@@ -89,12 +90,9 @@ export function PubForm(props: { publisher?: Publisher }) {
                     }}
                 />
                 <Form.FormSelect
-                    field={"country"}
                     list={countryList}
-                    required
                     selected={publisher.country}
-                    setter={val => setPublisher({ country: val?.value as string | undefined })}
-                    label="Country"
+                    setSelected={country => setPublisher({country})}
                 />
                 <Form.Input<typeof publisher>
                     field="headquarters"

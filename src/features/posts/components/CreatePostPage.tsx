@@ -6,6 +6,8 @@ import { UploadBox } from "~/components/UploadBox/UploadBox"
 import { useCreatePost } from "../hooks/useCreatePost"
 import { Trash2Icon } from "lucide-solid"
 import { ImagePreview } from "~/components/ImagePreview"
+import { AsyncSelect } from "~/components/Forms/AsyncSelect"
+import { gamesQueryOpts } from "~/features/games/utils/gameQueryOpts"
 
 export function CreatePostPage() {
     const { handleSubmit,
@@ -69,18 +71,15 @@ export function CreatePostPage() {
                     maxLength={255}
                 />
                 <div innerHTML={preview()} />
-                <Suspense>
-                    <Form.FormSelect<typeof input>
-                        selected={input.game?.gameId ?? null}
-                        list={result.data!.map(game => ({
-                            label: game.title,
-                            value: game.gameId
-                        }))}
-                        required={false}
-                        field="game"
-                        setter={val => setInput('game', val ? { gameId: val.value as number, title: val.label } : null)}
-                    />
-                </Suspense>
+                <AsyncSelect
+                    field=""
+                    //@ts-expect-error
+                    queryOptions={gamesQueryOpts()}
+                    getLabel={game => game.title}
+                    getValue={game => game.gameId}
+                    selected={input.game?.gameId ?? null}
+                    setSelected={game => setInput({game})}
+                />
                 <Form.TagsInput
                     tagLimit={5}
                     tagLength={15}
