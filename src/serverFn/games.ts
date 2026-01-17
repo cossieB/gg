@@ -65,7 +65,7 @@ export const updateGameFn = createServerFn({ method: "POST" })
     .inputValidator(GameEditSchema)
     .handler(async ({ data }) => {
         const { gameId, media, platforms, genres, ...game } = data
-        gamesRepository.updateGame(gameId, game, { platforms, media, genres })
+        await gamesRepository.updateGame(gameId, game, { platforms, media, genres })
     })
 
 export const getGamesWithoutExtras = createServerFn()

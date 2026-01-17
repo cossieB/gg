@@ -11,7 +11,6 @@ export function PostList(props: { filters?: PostFilters }) {
 
     onMount(() => {
         observer = new IntersectionObserver(entries => {
-            console.log(entries)
             if (entries.at(-1)!.isIntersecting)
                 result.fetchNextPage()
         })

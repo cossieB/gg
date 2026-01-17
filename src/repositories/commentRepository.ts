@@ -10,8 +10,8 @@ export function findCommentsByPostId(postId: number, replyTo?: number, userId?: 
     const reactionQuery = db.$with("rq").as(
         db.select({
             commentId: commentReactions.commentId,
-            likes: sql<number>`SUM(CASE WHEN ${commentReactions.reaction} = 'like' THEN 1 ELSE 0 END)`.as("likes"),
-            dislikes: sql<number>`SUM(CASE WHEN ${commentReactions.reaction} = 'dislike' THEN 1 ELSE 0 END)`.as("dislikes"),
+            likes: sql<number>`COUNT(CASE WHEN ${commentReactions.reaction} = 'like' THEN 1 END)::INT`.as("likes"),
+            dislikes: sql<number>`COUNT(CASE WHEN ${commentReactions.reaction} = 'dislike' THEN 1 END)::INT`.as("dislikes"),
         })
             .from(commentReactions)
             .groupBy(commentReactions.commentId)

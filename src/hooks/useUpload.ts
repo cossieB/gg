@@ -1,6 +1,6 @@
 import { useServerFn } from "@tanstack/solid-start";
 import { createStore } from "solid-js/store";
-import { getSignedUrls } from "~/services/uploadService";
+import { getSignedUrls } from "~/integrations/uploadService";
 import { uploadToSignedUrl } from "~/utils/uploadToSignedUrl";
 import { useToastContext } from "./useToastContext";
 import { mergeObjectArrays, zip } from "~/lib/zip";
@@ -42,7 +42,6 @@ export function useUpload(
             setState('isUploading', false)            
         }
     }
-    type T = Parameters<typeof setState>
     const setFiles = (files: typeof state.files | ((prev: typeof state.files) => typeof state.files)) => setState('files', files)
     
     return {

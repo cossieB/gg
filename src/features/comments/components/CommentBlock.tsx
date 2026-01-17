@@ -22,7 +22,7 @@ type Props = {
 
 export function CommentBlock(props: Props) {
 
-    const { fn } = useReactToComment(props.comment, props.postId);
+    const { fn, isPending } = useReactToComment(props.comment, props.postId);
     const { setCommentState, commentState, replyMutation } = useReplyToComment(props.comment, props.postId)
     const session = authClient.useSession()
     const { deleteMutation } = useDeleteComment(props.comment, props.postId, props.replyTo)
@@ -54,12 +54,14 @@ export function CommentBlock(props: Props) {
                 <div class={styles.react} >
                     <button onclick={fn('like')}
                         classList={{ [styles.liked]: props.comment.yourReaction === "like" }}
+                        disabled={isPending()}
                     >
                         <ThumbsUpIcon />
                     </button>
                     <button
                         onclick={fn('dislike')}
                         classList={{ [styles.disliked]: props.comment.yourReaction === "dislike" }}
+                        disabled={isPending()}
                     >
                         <ThumbsDownIcon />
                     </button>

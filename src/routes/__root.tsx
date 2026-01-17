@@ -1,11 +1,9 @@
 /// <reference types="vite/client" />
 import {
     HeadContent,
-    Link,
     Outlet,
     Scripts,
     createRootRouteWithContext,
-    useSearch,
 } from '@tanstack/solid-router'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { TanStackRouterDevtools } from '@tanstack/solid-router-devtools'
@@ -17,10 +15,10 @@ import { NotFound } from '~/components/NotFound/NotFound'
 import { seo } from '~/utils/seo'
 import appCss from '/app.css?url'
 import resetCss from '/reset.css?url'
-import { MainLayout } from '~/components/MainLayout/MainLayout'
 import { ToastProvider } from '~/components/Toast/ToastProvider'
 import z from 'zod'
 import { useToastContext } from '~/hooks/useToastContext'
+import { getCurrentUser } from '~/serverFn/auth'
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient
@@ -80,9 +78,16 @@ export const Route = createRootRouteWithContext<{
         toasts: z.array(z.object({
             text: z.string(),
             type: z.enum(["error", "info", "warning"]).catch("info"),
-            autoFade: z.boolean().optional().default(true)
+            autoFade: z.boolean().optional().default(true).catch(true)
         })).optional().catch(undefined)
-    })
+    }),
+    headers: () => ({
+        "Cache-Control": "max-age=86400, public"
+    }),
+    beforeLoad: async ({context}) => {
+        const user = await getCurrentUser()
+        return {user}
+    },    
 })
 
 function RootComponent() {

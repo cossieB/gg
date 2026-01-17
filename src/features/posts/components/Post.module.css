@@ -146,6 +146,33 @@
     }
 }
 
+.game {
+    display: flex;
+    margin-left: auto;
+    z-index: 5;
+    position: relative;
+    &:hover {
+        background-color: var(--gray2);
+    }
+    >div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        :last-child {
+            color: gray;
+        }
+    }
+    img {
+        all: unset;
+        height: 5rem !important;
+        width: auto !important;
+    }
+    a {
+        position: absolute;
+        inset: 0;
+    }
+}
+
 .header {
     width: 100%;
     display: flex;

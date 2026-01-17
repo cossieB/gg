@@ -32,5 +32,5 @@ export function useReactToComment(comment: Awaited<ReturnType<typeof getComments
             })
         }
     }
-    return { fn }
+    return { fn, isPending: () => reactMutation.isPending }
 }

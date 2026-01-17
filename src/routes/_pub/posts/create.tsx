@@ -1,12 +1,10 @@
 import { createFileRoute, redirect } from '@tanstack/solid-router'
 import { gamesQueryOpts } from '~/features/games/utils/gameQueryOpts';
 import { CreatePostPage } from '~/features/posts/components/CreatePostPage';
-import { getCurrentUser } from '~/serverFn/auth'
 
 export const Route = createFileRoute('/_pub/posts/create')({
     component: RouteComponent,
-    beforeLoad: async () => {
-        const user = await getCurrentUser();
+    beforeLoad: async ({context: {user}}) => {
         if (!user) throw redirect({ to: "/auth/signin", replace: true, search: { redirect: "/create" }, })
     },
 

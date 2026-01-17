@@ -5,7 +5,7 @@ import * as userRepository from "~/repositories/userRepository"
 import { forceLogin, getCurrentUser as getCurrentUser } from "./auth";
 import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import { AppError } from "~/utils/AppError";
-import * as uploadService from "~/services/uploadService/cloudflareUploadService"
+import * as uploadService from "~/integrations/uploadService/cloudflareUploadService"
 
 export const getLoggedInUser = createServerFn()
     .handler(async () => {

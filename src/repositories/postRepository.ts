@@ -1,6 +1,6 @@
 import { and, count, desc, eq, getColumns, gt, inArray, lt, SQL, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
-import { comments, media, postReactions, posts, postTags, users } from "~/drizzle/schema";
+import { comments, games, media, postReactions, posts, postTags, users } from "~/drizzle/schema";
 
 type PostInsert = {
     title: string;
@@ -145,8 +145,8 @@ function detailedPosts(obj: Args = { filters: [], limit: 1}, userId?: string) {
     const reactionQuery = db.$with("rq").as(
         db.select({
             postId: postReactions.postId,
-            likes: sql<number>`SUM(CASE WHEN ${postReactions.reaction} = 'like' THEN 1 ELSE 0 END)`.as("likes"),
-            dislikes: sql<number>`SUM(CASE WHEN ${postReactions.reaction} = 'dislike' THEN 1 ELSE 0 END)`.as("dislikes"),
+            likes: sql<number>`COUNT(CASE WHEN ${postReactions.reaction} = 'like' THEN 1 END)::INT`.as("likes"),
+            dislikes: sql<number>`COUNT(CASE WHEN ${postReactions.reaction} = 'dislike' THEN 1 END)::INT`.as("dislikes"),
         })
             .from(postReactions)
             .groupBy(postReactions.postId)
@@ -192,7 +192,12 @@ function detailedPosts(obj: Args = { filters: [], limit: 1}, userId?: string) {
         comments: sql<number>`COALESCE(${commentsQuery.numComments}, 0)`.as("num_comments"),
         ...userId && ({
             yourReaction: userReactionQuery.reaction as any as SQL.Aliased<"like" | "dislike" | undefined>
-        })
+        }),
+        game: {
+            title: games.title,
+            cover: games.cover,
+            releaseDate: games.releaseDate
+        }
     })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
@@ -200,6 +205,7 @@ function detailedPosts(obj: Args = { filters: [], limit: 1}, userId?: string) {
         .leftJoin(tagsQuery, eq(posts.postId, tagsQuery.postId))
         .leftJoin(reactionQuery, eq(posts.postId, reactionQuery.postId))
         .leftJoin(commentsQuery, eq(posts.postId, commentsQuery.postId))
+        .leftJoin(games, eq(posts.gameId, games.gameId))
         .orderBy(desc(posts.postId))
         .where(and(...obj.filters))
         .limit(obj.limit ?? 10)

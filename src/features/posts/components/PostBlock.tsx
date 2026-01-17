@@ -1,5 +1,4 @@
 import { getPostFn } from '~/serverFn/posts'
-import styles from "./Post.module.css"
 import { For, Show } from 'solid-js'
 import { EllipsisVerticalIcon, MessageCircleIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-solid'
 import { getRelativeTime } from '~/lib/getRelativeTime'
@@ -11,16 +10,16 @@ import { authClient } from '~/auth/authClient'
 import { MenuPopover } from '~/components/Popover/MenuPopover'
 import { useReactToPost } from '../hooks/useReactToPost'
 import { useDeletePost } from '../hooks/useDeletePost'
-import { ConfirmPopover, ConfirmPopoverWithButton } from '~/components/Popover/Popover'
+import { ConfirmPopoverWithButton } from '~/components/Popover/Popover'
+import styles from "./Post.module.css"
 
 type Props = {
     post: Awaited<ReturnType<typeof getPostFn>>
 }
 
 export function PostBlock(props: Props) {
-
     const session = authClient.useSession()
-    const { fn } = useReactToPost(props.post)
+    const { fn, isPending } = useReactToPost(props.post)
     const { deleteMutation } = useDeletePost(props.post)
 
     return (
@@ -32,7 +31,6 @@ export function PostBlock(props: Props) {
                     <Link to='/users/$username' params={{ username: props.post.user.username! }} />
                 </div>
             </div>
-
             <div class={styles.content}>
                 <div class={styles.header}>
                     <h2> {props.post.title} </h2>
@@ -65,6 +63,16 @@ export function PostBlock(props: Props) {
                         </For>
                     </div>
                 </Show>
+                <Show when={props.post.gameId}>
+                    <div class={styles.game}>
+                        <img src={STORAGE_DOMAIN + props.post.game?.cover} alt="" />
+                        <div>
+                            <span> {props.post.game?.title} </span>
+                            <span> {props.post.game?.releaseDate.split("-")[0]} </span>
+                        </div>
+                        <Link to='/games/$gameId' params={{gameId: props.post.gameId!}} />
+                    </div>
+                </Show>
                 <div class={styles.buttons}>
                     <div>
                         <button><MessageCircleIcon /></button>
@@ -73,12 +81,14 @@ export function PostBlock(props: Props) {
                     <div class={styles.react} >
                         <button onclick={fn('like')}
                             classList={{ [styles.liked]: props.post.yourReaction === "like" }}
+                            disabled={isPending()}
                         >
                             <ThumbsUpIcon />
                         </button>
                         <button
                             onclick={fn('dislike')}
                             classList={{ [styles.disliked]: props.post.yourReaction === "dislike" }}
+                            disabled={isPending()}
                         >
                             <ThumbsDownIcon />
                         </button>
@@ -107,8 +117,15 @@ export function PostBlock(props: Props) {
                         </li>
                     </Show>
                     <li>
-                        <button>
-                            Save
+                        <button
+                            onClick={() => {
+                                navigator.share({
+                                    title: "Share post",
+                                    url: "/posts/" + props.post.postId
+                                })
+                            }}
+                        >
+                            Share
                         </button>
                     </li>
                 </ul>

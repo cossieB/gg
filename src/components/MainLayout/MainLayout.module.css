@@ -142,7 +142,7 @@
         max-width: 400px;
 
         >button {
-            background-color: light-dark(gray, #ffffff14);
+            background-color: #ffffff14;
             width: var(--icon-width);
             display: flex;
             align-items: center;
@@ -153,7 +153,7 @@
             all: unset;
             width: 100%;
             border: 1px solid gray;
-            background-color: light-dark(hsl(0, 0%, 85%), hsl(0, 0%, 15%));
+            background-color: hsl(0, 0%, 15%);
             padding-left: 0.5rem;
         }
     }

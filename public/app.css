@@ -1,11 +1,12 @@
 :root {
   font-size: clamp(12px, calc(12px + 1vw), 16px);
-  --bg-clr: light-dark(#eee, #121212);
-  --txt-clr: light-dark(#333, #f1f1f1);
+  --bg-clr: #121212;
+  --txt-clr: #f1f1f1;
   --neon-pink: #F0F;
   --neon-green: hsl(150 100% 50%);
-  --content-bg: light-dark(rgb(230, 229, 229), hsl(0, 1%, 12%));
-  --gray1: light-dark(hsl(0, 2%, 90%), hsl(0, 2%, 17%));
+  --content-bg: hsl(0, 1%, 12%);
+  --gray1: hsl(0, 2%, 17%);
+  --gray2: #3f3f3f;
 }
 
 body {

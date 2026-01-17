@@ -6,13 +6,20 @@ type Post = Awaited<ReturnType<typeof getPostFn>>
 
 export function modifyPostCache(queryClient: QueryClient, postId: number, reaction: "dislike" | "like") {
     queryClient.setQueryData(["post", postId], (data: Post) => modifyPostInCache(data, reaction))
-    queryClient.setQueryData(postsQueryOpts().queryKey, (data): Post[] | undefined => {
+    queryClient.setQueryData(postsQueryOpts().queryKey, data => {
         if (!data) return undefined
-        const i = data.findIndex(x => x.postId == postId);
-        if (i == -1) return data;
-        const oldPost = data[i]
-        const newData = modifyPostInCache(oldPost, reaction)
-        return data.toSpliced(i, 1, newData)
+        const pages: typeof data.pages = []
+        for (const page of data.pages) {
+            const i = page.findIndex(x => x.postId == postId); 
+            if (i == -1) {
+                pages.push(page);
+                continue;
+            };
+            const oldPost = page[i]; 
+            const newData = modifyPostInCache(oldPost, reaction)
+            pages.push(page.toSpliced(i, 1, newData))
+        }
+        return {...data, pages}
     })
 }
 

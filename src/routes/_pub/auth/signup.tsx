@@ -28,7 +28,8 @@ function RouteComponent() {
         setSubmitting(true)
         await authClient.signUp.email({
             ...input,
-            name: input.username
+            name: input.username,
+            callbackURL: "/settings/profile"
         }, {
             onError(context) {
                 addToast({ type: "error", text: context.error.message })

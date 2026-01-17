@@ -2,7 +2,7 @@ import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { username } from "better-auth/plugins";
 import { db } from "~/drizzle/db";
-import { emailService } from "~/services/emailService";
+import { emailService } from "~/integrations/emailService";
 import { redis } from "~/utils/redis";
 
 export const auth = betterAuth({
@@ -107,22 +107,28 @@ export const auth = betterAuth({
             },
         }
     },
-    // secondaryStorage: {
-    //     set(key, value, ttl) {
-    //         if (ttl)
-    //             redis.setEx(key, ttl, value)
-    //         else
-    //             redis.set(key, value)
-    //     },
-    //     delete(key) {
-    //         redis.del(key)
-    //     },
-    //     get(key) {
-    //         return redis.get(key)
-    //     },
-    // },
+    secondaryStorage: {
+        set(key, value, ttl) {
+            if (ttl)
+                redis.setEx(key, ttl, value)
+            else
+                redis.set(key, value)
+        },
+        delete(key) {
+            redis.del(key)
+        },
+        get(key) {
+            return redis.get(key)
+        },
+    },
     rateLimit: {
         enabled: true,
+        customRules: {
+            "/send-verification-email": {
+                window: 60,
+                max: 1
+            }
+        }
     },
 });
 

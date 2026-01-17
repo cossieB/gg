@@ -10,6 +10,7 @@ export function useReactToPost(post: Awaited<ReturnType<typeof getPostFn>>) {
     const { addToast } = useToastContext()
     const react = useServerFn(reactToPostFn);
         const queryClient = useQueryClient()
+
     const mutation = useMutation(() => ({
         mutationFn: react,
     }))
@@ -33,5 +34,5 @@ export function useReactToPost(post: Awaited<ReturnType<typeof getPostFn>>) {
             })
         }
     }
-    return {fn}
+    return {fn, isPending: () => mutation.isPending}
 }
