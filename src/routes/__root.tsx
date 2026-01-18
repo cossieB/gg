@@ -81,9 +81,6 @@ export const Route = createRootRouteWithContext<{
             autoFade: z.boolean().optional().default(true).catch(true)
         })).optional().catch(undefined)
     }),
-    headers: () => ({
-        "Cache-Control": "max-age=86400, public"
-    }),
     beforeLoad: async ({context}) => {
         const user = await getCurrentUser()
         return {user}

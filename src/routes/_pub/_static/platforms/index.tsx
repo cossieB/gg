@@ -1,44 +1,43 @@
 import { useQuery, useQueryClient } from '@tanstack/solid-query'
 import { createFileRoute } from '@tanstack/solid-router'
-import { createEffect, For, Suspense } from 'solid-js'
+import { Suspense, For, createEffect } from 'solid-js'
 import { LogoLink } from '~/components/LogoLink/LogoLink'
-import { developerQueryOpts, developersQueryOpts } from '~/features/developers/utils/developerQueryOpts'
+import { platformQueryOpts, platformsQueryOpts } from '~/features/platforms/utils/platformQueryOpts'
 import { STORAGE_DOMAIN } from '~/utils/env'
 
-export const Route = createFileRoute('/_pub/developers/')({
+export const Route = createFileRoute('/_pub/_static/platforms/')({
     component: RouteComponent,
     loader: async ({ context }) => {
-        await context.queryClient.ensureQueryData(developersQueryOpts())
+        await context.queryClient.ensureQueryData(platformsQueryOpts())
     },
     head: () => ({
-        meta: [{ title: "Developers :: 1Clip" }],
+        meta: [{ title: "Platforms :: 1Clip" }],
     }),
 })
 
 function RouteComponent() {
     const queryClient = useQueryClient()
-    const result = useQuery(() => developersQueryOpts())
+    const result = useQuery(() => platformsQueryOpts())
 
     createEffect(() => {
         if (result.data) {
             for (const item of result.data) {
-                queryClient.setQueryData(developerQueryOpts(item.developerId).queryKey, item)
+                queryClient.setQueryData(platformQueryOpts(item.platformId).queryKey, item)
             }
         }
     })
 
     return (
         <div class={"grid300"}>
-
             <Suspense>
                 <For each={result.data}>
-                    {dev =>
+                    {platform =>
                         <LogoLink
-                            href='developer'
+                            href='platform'
                             item={{
-                                id: dev.developerId,
-                                logo: STORAGE_DOMAIN + dev.logo,
-                                name: dev.name
+                                id: platform.platformId,
+                                logo: STORAGE_DOMAIN + platform.logo,
+                                name: platform.name
                             }}
                         />
                     }

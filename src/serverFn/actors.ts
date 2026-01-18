@@ -2,9 +2,11 @@ import { notFound } from "@tanstack/solid-router";
 import { createServerFn } from "@tanstack/solid-start";
 import z from "zod";
 import { adminOnlyMiddleware } from "~/middleware/authorization";
+import { staticDataMiddleware } from "~/middleware/static";
 import * as actorRepository from "~/repositories/actorRepository"
 
 export const getActorFn = createServerFn()
+    .middleware([staticDataMiddleware])
     .inputValidator((id: number) => {
         if (Number.isNaN(id) || id < 1) throw notFound()
         return id
@@ -14,6 +16,7 @@ export const getActorFn = createServerFn()
     })
 
 export const getActorsFn = createServerFn()
+    .middleware([staticDataMiddleware])
     .handler(() => actorRepository.findAll())
 
 const actorCreateSchema = z.object({

@@ -7,7 +7,7 @@ import { GamesList } from '~/features/games/components/GamesList'
 import { gamesWithExtrasQueryOpts } from '~/features/games/utils/gameQueryOpts'
 import { STORAGE_DOMAIN } from '~/utils/env'
 
-export const Route = createFileRoute('/_pub/actors/$actorId/')({
+export const Route = createFileRoute('/_pub/_static/actors/$actorId/')({
     component: RouteComponent,
 
     loader: async ({ context, params }) => {

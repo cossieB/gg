@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/solid-router'
 import { GamesList } from '~/features/games/components/GamesList'
 import { gamesWithExtrasQueryOpts } from '~/features/games/utils/gameQueryOpts'
 
-export const Route = createFileRoute('/_pub/games/genres/$genre')({
+export const Route = createFileRoute('/_pub/_static/games/genres/$genre')({
     component: RouteComponent,
     loader: async ({ context, params: { genre } }) => {
         return context.queryClient.ensureInfiniteQueryData(gamesWithExtrasQueryOpts({genre: genre}))

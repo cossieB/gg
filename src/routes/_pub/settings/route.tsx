@@ -16,6 +16,9 @@ const getSessionFn = createServerFn()
 
 export const Route = createFileRoute('/_pub/settings')({
     component: RouteComponent,
+    headers: () => ({
+        "Cache-Control": "max-age=3600, private"
+    }),
     validateSearch: z.object({error: z.string().optional()}),
     loader: ({ location }) => getSessionFn({ data: location.href })
 })

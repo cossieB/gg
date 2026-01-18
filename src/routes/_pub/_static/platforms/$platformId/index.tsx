@@ -8,7 +8,7 @@ import { STORAGE_DOMAIN } from '~/utils/env'
 import { platformQueryOpts } from '~/features/platforms/utils/platformQueryOpts'
 import { gamesWithExtrasQueryOpts } from '~/features/games/utils/gameQueryOpts'
 
-export const Route = createFileRoute('/_pub/platforms/$platformId/')({
+export const Route = createFileRoute('/_pub/_static/platforms/$platformId/')({
     component: RouteComponent,
 
     loader: async ({ context, params }) => {

@@ -10,7 +10,7 @@ import { platformQueryOpts } from '~/features/platforms/utils/platformQueryOpts'
 import { publisherQueryOpts } from '~/features/publishers/utils/publisherQueryOpts'
 import { getGameFn } from '~/serverFn/games'
 
-export const Route = createFileRoute('/_pub/games/$gameId/')({
+export const Route = createFileRoute('/_pub/_static/games/$gameId/')({
     component: RouteComponent,
 
     loader: async ({ context, params: { gameId } }) => {

@@ -2,10 +2,12 @@ import { notFound } from "@tanstack/solid-router";
 import { createServerFn } from "@tanstack/solid-start"
 import z from "zod";
 import { adminOnlyMiddleware } from "~/middleware/authorization";
+import { staticDataMiddleware } from "~/middleware/static";
 import * as gamesRepository from "~/repositories/gamesRepository";
 import { AppError } from "~/utils/AppError";
 
 export const getGamesFn = createServerFn()
+    .middleware([staticDataMiddleware])
     .inputValidator(z.object({
         developerId: z.number(),
         publisherId: z.number(),
@@ -15,9 +17,11 @@ export const getGamesFn = createServerFn()
         limit: z.number(),
         cursor: z.number()
     }).partial().optional())
+    
     .handler(({ data }) => gamesRepository.findGamesWithDetails(data))
 
 export const getGameFn = createServerFn()
+    .middleware([staticDataMiddleware])
     .inputValidator((gameId: number) => {
         if (Number.isNaN(gameId) || gameId < 1) throw notFound()
         return gameId

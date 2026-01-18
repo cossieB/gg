@@ -2,11 +2,15 @@ import { notFound } from "@tanstack/solid-router"
 import { createServerFn } from "@tanstack/solid-start"
 import z from "zod"
 import { adminOnlyMiddleware } from "~/middleware/authorization"
+import { staticDataMiddleware } from "~/middleware/static"
 import * as platformRepository from "~/repositories/platformRepository"
 
-export const getPlatformsFn = createServerFn().handler(() => platformRepository.findAll())
+export const getPlatformsFn = createServerFn()
+    .middleware([staticDataMiddleware])
+    .handler(() => platformRepository.findAll())
 
 export const getPlatformFn = createServerFn()
+    .middleware([staticDataMiddleware])
     .inputValidator((id: number) => {
         if (Number.isNaN(id) || id < 1) throw notFound()
         return id

@@ -1,5 +1,5 @@
-import { createFileRoute, redirect, useLocation, useNavigate } from '@tanstack/solid-router'
-import { Match, Show, Switch } from 'solid-js'
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/solid-router'
+import { Show } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { authClient } from '~/auth/authClient'
 import { Form } from '~/components/Forms/Form'

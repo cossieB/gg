@@ -5,7 +5,7 @@ import { LogoLink } from '~/components/LogoLink/LogoLink'
 import { STORAGE_DOMAIN } from '~/utils/env'
 import { publisherQueryOpts, publishersQueryOpts } from '~/features/publishers/utils/publisherQueryOpts'
 
-export const Route = createFileRoute('/_pub/publishers/')({
+export const Route = createFileRoute('/_pub/_static/publishers/')({
     component: RouteComponent,
     loader: async ({ context }) => {
         return context.queryClient.ensureQueryData(publishersQueryOpts())
