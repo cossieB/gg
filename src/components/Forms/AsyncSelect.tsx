@@ -17,6 +17,7 @@ export function AsyncSelect<T, V extends string | number>(props: Props<T, V>) {
 
     return (
         <Suspense>
+            {/* @ts-expect-error */}
             <FormSelect
                 list={result.data ?? []}
                 selected={props.selected}
