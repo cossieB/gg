@@ -9,7 +9,7 @@ export type EmailOptions = {
 }
 
 export interface EmailService {
-    sendMail(opts: EmailOptions): Promise<void>
+    sendMail(opts: EmailOptions): Promise<any>
 }
 
 export const emailService = (function(): EmailService {

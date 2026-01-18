@@ -4,6 +4,7 @@ import { username } from "better-auth/plugins";
 import { db } from "~/drizzle/db";
 import { emailService } from "~/integrations/emailService";
 import { redis } from "~/utils/redis";
+import { waitUntil } from "@vercel/functions";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -31,42 +32,42 @@ export const auth = betterAuth({
             enabled: true,
             updateEmailWithoutVerification: true,
             sendChangeEmailConfirmation: async ({ newEmail, url, token }) => {
-                void emailService.sendMail({
+                waitUntil(emailService.sendMail({
                     to: newEmail,
                     subject: "Verify your email address",
                     text: `Click the link to verify your email: ${url}`,
-                })
+                }))
             },
         },
         deleteUser: {
             enabled: true,
             sendDeleteAccountVerification: async ({url, user}) => {
-                void emailService.sendMail({
+                waitUntil(emailService.sendMail({
                     to: user.email,
                     subject: "Confirm account deletion",
                     text: `Click the link to confirm that you want to delete your account: ${url}`
-                })
+                }))
             }
         }
     },
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async (data, request) => {
-            void emailService.sendMail({
+            waitUntil(emailService.sendMail({
                 to: data.user.email,
                 subject: "Reset your password",
                 text: `Click the link to reset your password: ${data.url}`
-            })
+            }))
         },        
     },
     emailVerification: {
         sendOnSignUp: true,
         sendVerificationEmail: async ({ user, url, token }) => {
-            void emailService.sendMail({
+            waitUntil(emailService.sendMail({
                 to: user.email,
                 subject: "Verify your email address",
                 text: `Click the link to verify your email: ${url}`,
-            })
+            }))
         },
         autoSignInAfterVerification: true,
     },
