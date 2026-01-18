@@ -5,6 +5,7 @@ yarn.lock
 .cache
 .env
 .env.test
+.env.local
 .vercel
 .output
 /build/
