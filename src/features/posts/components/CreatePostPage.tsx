@@ -6,7 +6,7 @@ import { useCreatePost } from "../hooks/useCreatePost"
 import { ImagePreview } from "~/components/ImagePreview"
 import { AsyncSelect } from "~/components/Forms/AsyncSelect"
 import { gamesQueryOpts } from "~/features/games/utils/gameQueryOpts"
-import { sanitizeText } from "~/utils/sanitizeText"
+import { variables } from "~/utils/variables"
 
 export function CreatePostPage() {
     const { handleSubmit,
@@ -14,9 +14,6 @@ export function CreatePostPage() {
         isUploading,
         setInput,
         mutation,
-        preview,
-        setPreview,
-        result,
         setFiles,
     } = useCreatePost()
 
@@ -64,12 +61,10 @@ export function CreatePostPage() {
                     field="text"
                     setter={val => {
                         setInput({ text: val });
-                        setPreview(sanitizeText(val))
                     }}
                     value={input.text}
-                    maxLength={255}
+                    maxLength={variables.POST_LIMIT}
                 />
-                <div innerHTML={preview()} />
                 <AsyncSelect
                     field=""
                     //@ts-expect-error

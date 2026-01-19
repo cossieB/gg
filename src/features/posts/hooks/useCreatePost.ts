@@ -33,8 +33,6 @@ export function useCreatePost() {
         tags: [] as string[],
     })
     
-    const [preview, setPreview] = createSignal("")
-
     async function handleSubmit(e: SubmitEvent) {
         const { game, ...rest } = input
         e.preventDefault();
@@ -72,9 +70,7 @@ export function useCreatePost() {
         handleSubmit,
         isUploading,
         abortController,
-        setPreview,
         mutation,
-        preview,
         result,
         setFiles
     }

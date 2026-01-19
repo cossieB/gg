@@ -3,15 +3,15 @@ import { createServerFn } from "@tanstack/solid-start";
 import z from "zod";
 import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import * as postRepository from "~/repositories/postRepository"
-import { sanitizeText } from "~/utils/sanitizeText";
 import { getCurrentUser } from "./auth";
 import { AppError } from "~/utils/AppError";
+import { variables } from "~/utils/variables";
 
 export const createPostFn = createServerFn({ method: "POST" })
     .middleware([verifiedOnlyMiddleware])
     .inputValidator(z.object({
         title: z.string().min(3).max(30),
-        text: z.string().max(255),
+        text: z.string().max(variables.POST_LIMIT),
         media: z.array(z.object({
             key: z.string(),
             contentType: z.string()
@@ -21,8 +21,7 @@ export const createPostFn = createServerFn({ method: "POST" })
     }))
     .handler(async ({ data, context: { user } }) => {
         if (data.text.length + data.media.length === 0) throw new AppError("Empty post", 404)
-        const text = sanitizeText(data.text)    
-        const post = await postRepository.createPost({ ...data, userId: user.id, text })
+        const post = await postRepository.createPost({ ...data, userId: user.id, })
         return {...post, user}
     })
 
