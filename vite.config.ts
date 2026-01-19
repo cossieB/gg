@@ -16,9 +16,4 @@ export default defineConfig({
     tanstackStart(),
     viteSolid({ ssr: true }),
   ],
-  build: {
-    rollupOptions: {
-      external: ['jsdom'],
-    }
-  }
 })

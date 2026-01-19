@@ -1,12 +1,12 @@
 import { For } from "solid-js"
 import styles from "./CreatePostPage.module.css"
-import { sanitizeText } from "~/utils/sanitizeText"
 import { Form } from "~/components/Forms/Form"
 import { UploadBox } from "~/components/UploadBox/UploadBox"
 import { useCreatePost } from "../hooks/useCreatePost"
 import { ImagePreview } from "~/components/ImagePreview"
 import { AsyncSelect } from "~/components/Forms/AsyncSelect"
 import { gamesQueryOpts } from "~/features/games/utils/gameQueryOpts"
+import { sanitizeText } from "~/utils/sanitizeText"
 
 export function CreatePostPage() {
     const { handleSubmit,
@@ -64,7 +64,7 @@ export function CreatePostPage() {
                     field="text"
                     setter={val => {
                         setInput({ text: val });
-                        sanitizeText(val).then(str => setPreview(str))
+                        setPreview(sanitizeText(val))
                     }}
                     value={input.text}
                     maxLength={255}

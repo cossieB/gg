@@ -1,14 +1,9 @@
 import {marked} from "marked"
-import DOMPurify, { Config } from "dompurify"
+import DOMPurify, { Config } from "isomorphic-dompurify"
 
-export async function sanitizeText(str: string) {
+export function sanitizeText(str: string) {
     const m = marked(str) as string
-    if (typeof window != "undefined") {
-        return DOMPurify().sanitize(m, config)
-    }
-    const {JSDOM} = await import("jsdom")
-    const wind = new JSDOM("").window
-    return DOMPurify(wind).sanitize(m, config)
+    return DOMPurify.sanitize(m, config)
 }
 
 const config: Config = {

@@ -21,7 +21,7 @@ export const createPostFn = createServerFn({ method: "POST" })
     }))
     .handler(async ({ data, context: { user } }) => {
         if (data.text.length + data.media.length === 0) throw new AppError("Empty post", 404)
-        const text = await sanitizeText(data.text)    
+        const text = sanitizeText(data.text)    
         const post = await postRepository.createPost({ ...data, userId: user.id, text })
         return {...post, user}
     })
