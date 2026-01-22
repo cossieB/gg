@@ -6,6 +6,7 @@ import * as postRepository from "~/repositories/postRepository"
 import { getCurrentUser } from "./auth";
 import { AppError } from "~/utils/AppError";
 import { variables } from "~/utils/variables";
+import { rateLimiter } from "~/utils/rateLimiter";
 
 export const createPostFn = createServerFn({ method: "POST" })
     .middleware([verifiedOnlyMiddleware])
@@ -20,7 +21,8 @@ export const createPostFn = createServerFn({ method: "POST" })
         gameId: z.number().optional()
     }))
     .handler(async ({ data, context: { user } }) => {
-        if (data.text.length + data.media.length === 0) throw new AppError("Empty post", 404)
+        await rateLimiter("post:create", user.id, 5, 60)
+        if (data.text.length + data.media.length === 0) throw new AppError("Empty post", 400)
         const post = await postRepository.createPost({ ...data, userId: user.id, })
         return {...post, user}
     })
@@ -58,8 +60,9 @@ export const reactToPostFn = createServerFn({method: "POST"})
         postId: z.number(),
         reaction: z.enum(["like", "dislike"])
     }))
-    .handler(async ({data, context}) => {
-        postRepository.reactToPost(data.postId, context.user.id, data.reaction)
+    .handler(async ({data, context: {user}}) => {
+        await rateLimiter("post:react", user.id, 10, 60)
+        await postRepository.reactToPost(data.postId, user.id, data.reaction)
     })
 
 export const deletePostFn = createServerFn({method: "POST"})
@@ -67,7 +70,8 @@ export const deletePostFn = createServerFn({method: "POST"})
     .inputValidator(z.object({
         postId: z.number()
     }))
-    .handler(async ({data, context}) => {
-        const result = await postRepository.deletePost(data.postId, context.user.id);
+    .handler(async ({data, context: {user}}) => {
+        await rateLimiter("post:delete", user.id, 5, 60)        
+        const result = await postRepository.deletePost(data.postId, user.id);
         if (result.length == 0) throw new AppError("Failed to delete", 400)
     })

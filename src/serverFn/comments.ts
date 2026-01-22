@@ -4,6 +4,7 @@ import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import * as commentsRepository from "~/repositories/commentRepository"
 import { getCurrentUser } from "./auth";
 import { AppError } from "~/utils/AppError";
+import { rateLimiter } from "~/utils/rateLimiter";
 
 export const addCommentFn = createServerFn({method: "POST"})
     .middleware([verifiedOnlyMiddleware])
@@ -13,6 +14,7 @@ export const addCommentFn = createServerFn({method: "POST"})
         replyTo: z.number().nullish()
     }))
     .handler(async ({data, context: {user}}) => {
+        await rateLimiter("comment:create", user.id, 5, 60)
         try {
             return await commentsRepository.addComment({...data, userId: user.id});
         } catch (error) {
@@ -36,8 +38,9 @@ export const reactToCommentFn = createServerFn({method: "POST"})
         commentId: z.number(),
         reaction: z.enum(["like", "dislike"])
     }))
-    .handler(async ({data, context}) => {
-        commentsRepository.reactToComment(data.commentId, context.user.id, data.reaction)
+    .handler(async ({data, context: {user}}) => {
+        await rateLimiter("comment:react", user.id, 10, 60)        
+        await commentsRepository.reactToComment(data.commentId, user.id, data.reaction)
     })    
 
 export const deleteCommentFn = createServerFn({method: "POST"})    
@@ -45,7 +48,8 @@ export const deleteCommentFn = createServerFn({method: "POST"})
     .inputValidator(z.object({
         commentId: z.number()
     }))
-    .handler(async ({data, context}) => {
-        const result = await commentsRepository.deleteComment(data.commentId, context.user.id)
+    .handler(async ({data, context: {user}}) => {
+        await rateLimiter("comment:delete", user.id, 5, 60)
+        const result = await commentsRepository.deleteComment(data.commentId, user.id)
         if (result.length == 0) throw new AppError("Failed to delete", 400)
     })
