@@ -21,7 +21,6 @@
     "@tanstack/solid-router-devtools": "^1.150.0",
     "@tanstack/solid-router-ssr-query": "^1.150.0",
     "@tanstack/solid-start": "^1.150.0",
-    "@vercel/functions": "^3.3.6",
     "ag-grid-community": "^35.0.0",
     "better-auth": "^1.4.13",
     "drizzle-orm": "^1.0.0-beta.6-d6f09ef",

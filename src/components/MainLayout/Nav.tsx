@@ -19,7 +19,7 @@ export function Nav(props: { toggleNav(): void }) {
             </div>
             <ul>
                 <NavItem
-                    to="/"
+                    to="/posts"
                     label="Home"
                     icon={<HouseIcon />}
                 />                
@@ -40,7 +40,7 @@ export function Nav(props: { toggleNav(): void }) {
                 />
                 <Show when={session().data && session().data!.user.emailVerified}>
                     <NavItem
-                        to="/create"
+                        to="/posts/create"
                         icon={<CirclePlus />}
                         label="Create"
                         style={{color: "var(--neon-pink)"}}
