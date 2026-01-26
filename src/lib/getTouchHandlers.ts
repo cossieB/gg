@@ -14,7 +14,7 @@ export function getTouchHandlers(funcs: Functions = {}) {
         y1 = e.touches.item(0)!.clientY;
     }
     function handleTouchEnd(e: TouchEvent) {
-        const item = e.changedTouches.item(0); console.log(x1, y1)
+        const item = e.changedTouches.item(0); 
         if (!item) return;
         const { clientX: x2, clientY: y2 } = item
         const m = (y1 - y2) / (x2 - x1) // High school gradient formula. clientY starts from the top. That's why I swapped y1 and y2 

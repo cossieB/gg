@@ -50,7 +50,8 @@ export const getPostsFn = createServerFn()
         dislikerUsername: z.string(),
         tag: z.string(),
         limit: z.number(),
-        cursor: z.number()
+        cursor: z.number(),
+        followerId: z.uuidv7()
     }).partial().optional())
     .handler(async ({data}) => {
         const user = await getCurrentUser()

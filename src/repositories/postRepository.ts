@@ -1,6 +1,6 @@
 import { and, count, desc, eq, getColumns, gt, inArray, lt, SQL, sql } from "drizzle-orm";
 import { db } from "~/drizzle/db";
-import { comments, games, media, postReactions, posts, postTags, users } from "~/drizzle/schema";
+import { comments, followerFollowee, games, media, postReactions, posts, postTags, users } from "~/drizzle/schema";
 
 type PostInsert = {
     title: string;
@@ -34,6 +34,7 @@ export type PostFilters = {
     tag?: string
     limit?: number
     cursor?: number
+    followerId?: string
 }
 
 export async function findAll(obj: PostFilters = {}, userId?: string) {
@@ -88,6 +89,22 @@ export async function findAll(obj: PostFilters = {}, userId?: string) {
 
     if (obj.cursor)
         filters.push(lt(posts.postId, obj.cursor))
+
+    if (obj.followerId)
+        filters.push(inArray(
+            posts.postId,
+            db
+                .select({postId: posts.postId})
+                .from(posts)
+                .where(inArray(
+                    posts.userId,
+                    db.select({
+                        userId: followerFollowee.followeeId
+                    })
+                    .from(followerFollowee)
+                    .where(eq(followerFollowee.followerId, obj.followerId))
+                ))
+        ))
 
     return detailedPosts({ filters, limit: obj.limit }, userId)
 }

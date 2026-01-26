@@ -4,13 +4,13 @@ import { Require } from "~/lib/utilityTypes"
 import styles from "./NavTabs.module.css"
 
 type Props = {
-    tabs: Array<Require<LinkComponentProps, 'to'> & {label: string}>
+    tabs: Array<Require<LinkComponentProps, 'to'> & { label: string }>
 }
 
 export function NavTabs(props: Props) {
     const [i, setI] = createSignal(0)
     return (
-        <nav class={styles.nav} style={{"--count": props.tabs.length, "--i": i()}}>
+        <nav class={styles.nav} style={{ "--count": props.tabs.length, "--i": i() }}>
             <For each={props.tabs}>
                 {(tab, i) =>
                     <Tab
@@ -23,21 +23,19 @@ export function NavTabs(props: Props) {
     )
 }
 
-function Tab(props: Props["tabs"][number] & {setIdx(): void}) {
+function Tab(props: Props["tabs"][number] & { setIdx(): void }) {
     const [div, linkProps] = splitProps(props, ['label', 'setIdx'])
     const location = useLocation()
-    
+
     createEffect(() => {
-        if (location().pathname.toLowerCase().endsWith(props.label.toLowerCase()))
+        if (location().pathname.toLowerCase().endsWith(props.to.toLowerCase()))
             div.setIdx()
     })
 
     return (
         <div class={`${styles.tab} cutout`}>
             {div.label}
-            <Link 
-                {...linkProps} 
-                />
+            <Link {...linkProps} />
         </div>
     )
 }

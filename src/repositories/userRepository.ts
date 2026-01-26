@@ -17,8 +17,8 @@ export async function findById(userId: string, loggedInUserId?: string) {
                 .select({_: sql`1`})
                 .from(followerFollowee)
                 .where(and(
-                    eq(followerFollowee.followeeId, loggedInUserId),
-                    eq(followerFollowee.followerId, userId)
+                    eq(followerFollowee.followerId, loggedInUserId),
+                    eq(followerFollowee.followeeId, userId)
                 ))
             ) as SQL<boolean>
         })
@@ -48,8 +48,8 @@ export async function findByUsername(username: string, loggedInUserId?: string) 
                 .select({_: sql`1`})
                 .from(followerFollowee)
                 .where(and(
-                    eq(followerFollowee.followeeId, loggedInUserId),
-                    eq(followerFollowee.followerId, sub.userId)
+                    eq(followerFollowee.followerId, loggedInUserId),
+                    eq(followerFollowee.followeeId, sub.userId)
                 ))
             ) as SQL<boolean>
         })

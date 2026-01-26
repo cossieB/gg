@@ -10,12 +10,15 @@ export const Route = createFileRoute('/_pub/posts/$postId')({
             postId: Number(params.postId)
         })
     },
-    loader: async ({ context, params: { postId }, }) => {        
+    loader: async ({ context, params: { postId }, }) => {
         if (Number.isNaN(postId)) throw notFound()
         return await context.queryClient.ensureQueryData(postQueryOpts(postId))
     },
     head: ({ loaderData }) => ({
         meta: loaderData ? [{ title: loaderData.title + " :: 1Clip" }] : undefined,
+    }),
+    headers: () => ({
+        "Cache-Control": "max-age=3600, private"
     }),
     component: RouteComponent,
 })

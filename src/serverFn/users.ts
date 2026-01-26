@@ -26,7 +26,6 @@ export const getUserByUsernameFn = createServerFn()
         
         const user = await userRepository.findByUsername(data, u?.id);
         if (!user) throw notFound()
-        console.log(user)
         return user
     })
 

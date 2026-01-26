@@ -3,7 +3,7 @@ import { Suspense } from 'solid-js'
 import { PostList } from '~/features/posts/components/PostList'
 import { postsQueryOpts } from '~/features/posts/utils/postQueryOpts'
 
-export const Route = createFileRoute('/_pub/posts/')({
+export const Route = createFileRoute('/_pub/posts/_feed/')({
     component: RouteComponent,
     loader: async ({ context }) => {
         await context.queryClient.ensureInfiniteQueryData(postsQueryOpts())
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_pub/posts/')({
 })
 
 function RouteComponent() {
-
+    
     return (
         <Suspense>
             <PostList />

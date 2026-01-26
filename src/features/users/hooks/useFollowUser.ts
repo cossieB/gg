@@ -10,7 +10,7 @@ export function useFollowUser(user: {username: string, id: string}) {
     const followUser = useMutation(() => ({
         mutationFn: () => follow({data: user.id}),
         onSuccess(data, variables, onMutateResult, context) {
-            queryClient.setQueryData(["users", user.username], (old: User | undefined) => {
+            queryClient.setQueryData(["users", user.username], (old: User | undefined): User | undefined => {
                 if (!old) return;
                 return {...old, isFollowing: data}
             })
