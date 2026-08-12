@@ -2,3 +2,5 @@
 - [x] XP system
 - [ ] game reviews
 - [x] live notifications
+- [ ] tests
+- [ ] rework notifications

@@ -1,9 +1,11 @@
-import { tanstackStart } from '@tanstack/solid-start/plugin/vite'
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
+import { tanstackStart } from '@tanstack/solid-start/plugin/vite'
 import viteSolid from 'vite-plugin-solid'
 import {nitro} from "nitro/vite"
 
 export default defineConfig(({command}) => ({
+
   server: {
     port: 1337,
   },
@@ -17,5 +19,8 @@ export default defineConfig(({command}) => ({
   },
   resolve: {
     tsconfigPaths: true
+  },
+  test: {
+    dir: "./tests/unit"
   }
 }))

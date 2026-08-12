@@ -15,9 +15,10 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": false,
+    "types": ["@testing-library/jest-dom"],
     "paths": {
       "~/*": ["./src/*"]
     },
-    "noEmit": true
+    "noEmit": true,
   }
 }

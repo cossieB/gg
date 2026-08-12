@@ -122,6 +122,18 @@ export const auth = betterAuth({
         get(key) {
             return redis.get(key)
         },
+        async getAndDelete(key) {
+            const value = await redis.get(key);
+            await redis.del(key);
+            return value;
+        },
+        async increment(key, ttl) {
+            const value = await redis.incr(key);
+            if (ttl && value === 1) {
+                await redis.expire(key, ttl);
+            }
+            return value;
+        },
     },
     rateLimit: {
         enabled: true,

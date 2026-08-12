@@ -19,3 +19,6 @@ yarn.lock
 /playwright/.cache/
 src/routeTree.gen.ts
 .tanstack
+
+# Playwright
+/playwright/.auth/

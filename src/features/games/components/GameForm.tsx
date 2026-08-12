@@ -35,7 +35,9 @@ export function GameForm(props: { game?: Game }) {
                 !game.banner ||
                 !game.developerId ||
                 !game.publisherId ||
-                !game.releaseDate
+                !game.releaseDate ||
+                !game.trailer ||
+                game.platforms.length == 0
             }
         >
             <Form.Input
@@ -151,7 +153,7 @@ export function GameForm(props: { game?: Game }) {
                 <AsyncSelect
                     field="Developer"
                     // @ts-expect-error
-                    queryOptions={developersQueryOpts()}
+                    queryOptions={developersQueryOpts(500)}
                     getLabel={item => item.name}
                     getValue={item => item.developerId}
                     selected={game.developerId ?? null}
@@ -161,7 +163,7 @@ export function GameForm(props: { game?: Game }) {
             <AsyncSelect
                 field="Publisher"
                 // @ts-expect-error
-                queryOptions={publishersQueryOpts()}
+                queryOptions={publishersQueryOpts(500)}
                 getLabel={item => item.name}
                 getValue={item => item.publisherId}
                 selected={game.publisherId ?? null}

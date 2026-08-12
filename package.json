@@ -8,7 +8,7 @@
     "build": "vite build && tsc --noEmit",
     "preview": "vite preview",
     "start": "node .output/server/index.mjs",
-    "test": "vitest"
+    "test": "vitest --mode test"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.970.0",
@@ -21,8 +21,8 @@
     "@tanstack/solid-start": "^1.168.19",
     "@tanstack/start-storage-context": "^1.167.11",
     "ag-grid-community": "^35.0.0",
-    "better-auth": "~1.4.13",
-    "drizzle-orm": "^1.0.0-beta.21",
+    "better-auth": "^1.6.26",
+    "drizzle-orm": "^1.0.0-rc.4",
     "lucide-solid": "^1.8.0",
     "nitro": "npm:nitro-nightly@latest",
     "nodemailer": "^8.0.1",
@@ -33,17 +33,23 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@solidjs/testing-library": "^0.8.10",
     "@tanstack/solid-query-devtools": "^5.91.2",
     "@tanstack/solid-router-devtools": "^1.150.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.10.4",
     "@types/nodemailer": "^7.0.4",
-    "drizzle-kit": "^1.0.0-beta.21",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^1.0.0-rc.4",
+    "jsdom": "^29.1.1",
     "postcss": "^8.5.1",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2",
+    "typescript": "^7.0.2",
     "vite": "^8.0.3",
     "vite-plugin-solid": "^2.11.10",
-    "vitest": "^4.0.15"
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=24",
