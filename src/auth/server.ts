@@ -4,13 +4,13 @@ import { username } from "better-auth/plugins";
 import { db } from "~/drizzle/db";
 import { emailService } from "~/integrations/emailService";
 import { redis } from "~/utils/redis";
-import * as schema from "~/drizzle/schema"
+import * as schema from "~/drizzle/schema/index"
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
         usePlural: true,
-        schema
+        schema,
     }),
     user: {
         fields: {

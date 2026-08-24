@@ -8,6 +8,7 @@ export function MainLayout(props: { children: JSXElement }) {
     const [showNav, setShowNav] = createSignal(false)
     const location = useLocation()
     onMount(() => {
+        document.body.dataset.testReady = "true"
         if (window.innerWidth >= 768) setShowNav(true)
     })
 

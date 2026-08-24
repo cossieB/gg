@@ -1,6 +1,10 @@
 import { test as teardown } from '@playwright/test';
+import { eq } from 'drizzle-orm';
+import { db } from '~/drizzle/db';
+import { users } from '~/drizzle/schema';
+import { redis } from '~/utils/redis';
 
-teardown('delete database', async ({ }) => {
-  console.log('deleting test database...');
-  // Delete the database
+teardown('reset data', async ({ }) => {
+    await db.delete(users).where(eq(users.username, "testuser"))
+    await redis.flushAll()
 });
