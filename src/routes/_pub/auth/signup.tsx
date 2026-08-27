@@ -59,6 +59,7 @@ function RouteComponent() {
                 </aside>
                 <Form.Input<typeof input>
                     field="email"
+                    data-testid="email"
                     setter={val => setInput('email', val)}
                     value={input.email}
                     validator={val => {
@@ -69,6 +70,7 @@ function RouteComponent() {
                 />
                 <Form.Input<typeof input>
                     field="username"
+                    data-testid="username"
                     setter={val => setInput('username', val)}
                     value={input.username}
                     validator={val => {
@@ -85,6 +87,7 @@ function RouteComponent() {
                 />
                 <Form.Input<typeof input>
                     field='password'
+                    data-testid="password"
                     setter={val => setInput('password', val)}
                     value={input.password}
                     validator={val => {
@@ -95,6 +98,7 @@ function RouteComponent() {
                 />
                 <Form.Input<typeof input>
                     field='confirmPassword'
+                    data-testid="confirmPassword"
                     setter={val => setInput('confirmPassword', val)}
                     value={input.confirmPassword}
                     validator={val => {

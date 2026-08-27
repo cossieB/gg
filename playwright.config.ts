@@ -2,9 +2,8 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import path from 'path';
 
-dotenv.config({ path: path.resolve(import.meta.dirname, '.env.test') });
+dotenv.config({ path: ".env.test" });
 
 /**
  * Read environment variables from file.
@@ -28,7 +27,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: 'null',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -89,5 +88,8 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:1337',
     reuseExistingServer: !process.env.CI,
+    env: {
+      NODE_ENV: "test"
+    }
   },
 });

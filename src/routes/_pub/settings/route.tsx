@@ -37,7 +37,7 @@ function RouteComponent() {
     return (
         <div class={"page"}>
             <Show when={isUnverified()}>
-                <aside
+                <aside                    
                     style={{ "background-color": "red", padding: "0.5rem 1rem" }}
                 >
                     {search().error == "token_expired" ? "That link has expired. " : "Your account is unverified. Check your email for the verification link. "}        

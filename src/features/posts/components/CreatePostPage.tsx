@@ -27,7 +27,7 @@ export function CreatePostPage() {
         <div class='flexCenter'>
             <Form
                 disabled={
-                    input.title.length < 3 || 
+                    input.title.length < 3 ||
                     input.text.length + input.link.length + files().length == 0 ||
                     embedError()
                 }
@@ -92,7 +92,7 @@ export function CreatePostPage() {
                                     setEmbedError(false)
                                     setInput({ link: val });
                                 }}
-                                style={{width: "unset", margin: "0.75rem 0"}}                                
+                                style={{ width: "unset", margin: "0.75rem 0" }}
                             />
 
                             <IframeFactory link={input.link} setError={setEmbedError} />

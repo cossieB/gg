@@ -3,11 +3,20 @@ import { defineConfig } from 'vite'
 import { tanstackStart } from '@tanstack/solid-start/plugin/vite'
 import viteSolid from 'vite-plugin-solid'
 import {nitro} from "nitro/vite"
+import dotenv from 'dotenv';
+import path from 'node:path';
+
+const environment = process.env.NODE_ENV || 'development';
+
+dotenv.config({
+  path: path.resolve(process.cwd(), `.env.${environment}`)
+});
 
 export default defineConfig(({command}) => ({
 
   server: {
     port: 1337,
+    strictPort: process.env.NODE_ENV == "development" || process.env.NODE_ENV == "test"
   },
   plugins: [
     nitro(),

@@ -5,6 +5,6 @@ import { users } from '~/drizzle/schema';
 import { redis } from '~/utils/redis';
 
 teardown('reset data', async ({ }) => {
-    await db.delete(users).where(eq(users.username, "testuser"))
+    await db.delete(users)
     await redis.flushAll()
 });
