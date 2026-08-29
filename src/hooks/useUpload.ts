@@ -59,18 +59,9 @@ export function useUpload(
         }
     }
 
-    function setFiles(files: typeof state.files): void;
-    function setFiles(files: ((prev: typeof state.files) => typeof state.files)): void;
-    function setFiles(i: number, file: Partial<typeof state.files[number]>): void;
-
-    function setFiles(arg1: number | typeof state.files | ((prev: typeof state.files) => typeof state.files), file?: Partial<typeof state.files[number]>) {
-        if (typeof arg1 === "object" || typeof arg1 == "function") {
-            return setState('files', arg1)
-        }
-        if (!file) throw new Error("File argument not provided");
-        return setState('files', arg1, prev => ({ ...prev, ...file }))
+    function setFiles(cb: (current: typeof state.files) => typeof state.files) {
+        setState("files", prev => cb(prev))
     }
-
 
     return {
         upload,

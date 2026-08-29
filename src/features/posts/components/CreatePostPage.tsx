@@ -36,6 +36,7 @@ export function CreatePostPage() {
             >
                 <Form.Input<typeof input>
                     field="title"
+                    data-testid="create-title"
                     setter={val => setInput({ title: val })}
                     value={input.title}
                     required
@@ -59,7 +60,7 @@ export function CreatePostPage() {
                                 label='Images'
                                 maxSize={8}
                                 onSuccess={async (array) => {
-                                    setFiles(array.map(x => ({ field: "media", ...x })))
+                                    setFiles(() => array.map(x => ({ field: "media", ...x })))
                                 }}
                                 style={{ height: "10rem" }}
                                 accept={{

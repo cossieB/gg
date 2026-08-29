@@ -12,6 +12,7 @@ import { platformsQueryOpts } from "~/features/platforms/utils/platformQueryOpts
 import { Game, MediaField, useGameForm } from "../hooks/useGameForm";
 import styles from "./GameForm.module.css"
 import { IframeFactory } from "~/components/embeds/IframeFactory";
+import { produce } from "solid-js/store";
 
 export function GameForm(props: { game?: Game }) {
     const {
@@ -130,7 +131,9 @@ export function GameForm(props: { game?: Game }) {
                             setMetadata={metadata => {
                                 setGame('media', i(), prev => ({ ...prev, metadata }));
                                 if (files()[i()])
-                                    setFiles(i(), { metadata })
+                                    setFiles(produce(prev => {
+                                        prev[i()].metadata = metadata
+                                    }))
                             }}
                         />
                         }

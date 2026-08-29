@@ -81,7 +81,7 @@ export function DevForm(props: { developer?: Developer }) {
                     image={developer.logo}
                     onDrop={data => {
                         setDeveloper({ logo: data.objectUrl })
-                        setFiles([{ ...data, field: "logo" }])
+                        setFiles(() => [{ ...data, field: "logo" }])
                     }}
                 />
                 <Form.FormSelect

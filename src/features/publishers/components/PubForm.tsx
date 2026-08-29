@@ -86,7 +86,7 @@ export function PubForm(props: { publisher?: Publisher }) {
                     image={publisher.logo}
                     onDrop={data => {
                         setPublisher({ logo: data.objectUrl })
-                        setFiles([{ ...data, field: "logo" }])
+                        setFiles(() => [{ ...data, field: "logo" }])
                     }}
                 />
                 <Form.FormSelect

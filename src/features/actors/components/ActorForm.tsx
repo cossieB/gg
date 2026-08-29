@@ -86,7 +86,7 @@ export function ActorForm(props: { actor?: Omit<Actor, 'characters'> & { charact
                     image={actor.photo ?? "/q.png"}
                     onDrop={data => {
                         setActor({ photo: data.objectUrl })
-                        setFiles([{ ...data, field: "photo" }])
+                        setFiles(() => [{ ...data, field: "photo" }])
                     }}
                 />
                 <ContentEditable

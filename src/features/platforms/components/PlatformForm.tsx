@@ -80,7 +80,7 @@ export function PlatformForm(props: { platform?: Platform }) {
                     image={platform.logo}
                     onDrop={data => {
                         setPlatform({ logo: data.objectUrl })
-                        setFiles([{ ...data, field: "logo" }])
+                        setFiles(() => [{ ...data, field: "logo" }])
                     }}
                 />
                 <ContentEditable
