@@ -8,6 +8,7 @@ import {
     index,
     varchar,
     date,
+    uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -27,9 +28,9 @@ export const users = pgTable("users", {
     username: varchar("username", { length: 15 }).notNull().unique(),
     displayUsername: varchar("display_username", { length: 15 }).notNull().unique(),
     role: varchar("role", { length: 10 }).default("user").notNull(),
-    bio: varchar("bio", {length: 255}).notNull().default(""),
+    bio: varchar("bio", { length: 255 }).notNull().default(""),
     dob: date('dob'),
-    location: varchar("location", {length: 100}),
+    location: varchar("location", { length: 100 }),
     links: text('links').array().notNull().default([])
 });
 
@@ -72,12 +73,19 @@ export const accounts = pgTable(
         refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
         scope: text("scope"),
         password: text("password"),
+        issuer: text("issuer").notNull(),
         createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
         updatedAt: timestamp("updated_at", { withTimezone: true })
             .$onUpdate(() => /* @__PURE__ */ new Date())
             .notNull(),
     },
-    (table) => [index("accounts_userId_idx").on(table.userId)],
+    (table) => [
+        index("accounts_userId_idx").on(table.userId),
+        uniqueIndex("accounts_issuer_accountId_uidx").on(
+            table.issuer,
+            table.accountId,
+        ),
+    ],
 );
 
 export const verifications = pgTable(
