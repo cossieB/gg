@@ -1,7 +1,8 @@
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { and, eq, inArray, InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { db } from "~/drizzle/db";
 import { notifications } from "~/drizzle/schema";
 import { sql, gt } from "drizzle-orm";
+import { Notification } from "~/drizzle/models";
 
 export async function addNotification(notification: InferInsertModel<typeof notifications>) {
     const [insert] = await db.insert(notifications).values(notification).returning();
@@ -17,6 +18,20 @@ export function getNotifications(filter: { userId: string }) {
             notificationId: "desc"
         }
     })
+}
+
+export function updateNotification(notificationId: number, notification: Partial<InferInsertModel<typeof notifications>>) {
+    return db.update(notifications)
+        .set(notification)
+        .where(eq(notifications.notificationId, notificationId))
+        .returning()
+}
+
+export function markAsRead(ids: number[], userId: string) {
+    return db.update(notifications).set({readAt: new Date}).where(and(
+        inArray(notifications.notificationId, ids),
+        eq(notifications.recipientId, userId)
+    ))
 }
 
 export async function truncateUserNotifications() {
@@ -40,6 +55,7 @@ export async function truncateUserNotifications() {
             sql`${notifications.notificationId} IN (
                 SELECT ${rankedSq.notificationId} 
                 FROM ${rankedSq} 
-                WHERE ${rankedSq.rowNum} > 20)
-            `);
+                WHERE ${rankedSq.rowNum} > 20
+            ) OR ${notifications.createdAt} < NOW() - INTERVAL '30 days'`
+        );
 }

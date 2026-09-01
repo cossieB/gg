@@ -1,19 +1,36 @@
 import { useNotifications } from "~/features/notifications/hooks/useNotificationContext";
 import { For, Show } from "solid-js";
-import { AtSignIcon, MessageCircleIcon, SettingsIcon, ThumbsUpIcon, UserPlusIcon } from "lucide-solid";
+import { AtSignIcon, MailCheckIcon, MailIcon, MailOpenIcon, MessageCircleIcon, SettingsIcon, ThumbsUpIcon, UserPlusIcon } from "lucide-solid";
 import { Dynamic } from "solid-js/web";
 import { getRelativeTime } from "~/lib/getRelativeTime";
 import styles from "./Notifications.module.css"
-import { Link } from "@tanstack/solid-router";
 import { Notification } from "~/drizzle/models";
-import { authClient } from "~/auth/authClient";
+import { Link } from "@tanstack/solid-router";
 
 export function NotificationsList() {
-    const session = authClient.useSession()
-    const notifications = useNotifications()
+    const { notifications, markAsRead } = useNotifications()
 
     return (
         <div class={styles.notifList}>
+            <button
+                class={styles.notification}
+                onClick={() => {
+                    const ids = (notifications.data ?? []).filter(n => !n.readAt).map(n => n.notificationId)
+                    if (!ids.length) return
+                    markAsRead.mutate({
+                        data: ids
+                    })
+                }}
+            >
+                <span class={styles.markRead} >
+                    {(notifications.data ?? []).length > 0 ? "Mark All As Read" : "No Notifications"}
+                </span>
+                <Show 
+                    when={(notifications.data ?? []).length > 0}
+                >
+                    <MailCheckIcon />
+                </Show>
+            </button>
             <For each={notifications.data}>
                 {notification => <Notif notification={notification} />}
             </For>
@@ -29,19 +46,48 @@ const icons = {
     SYSTEM: SettingsIcon
 }
 
-function Notif(props: { notification: Notification }) {
+type Props = {
+    notification: Notification;
+};
+
+function Notif(props: Props) {
+    const { markAsRead } = useNotifications()
+    const markRead = () => {
+        if (!props.notification.readAt)
+            markAsRead.mutate({
+                data: [props.notification.notificationId]
+            })
+    }
     return (
-        <div class={styles.notification}>
+        <div
+            class={styles.notification}
+        >
             <Dynamic component={icons[props.notification.type ?? "MENTION"]} />
-            <div>
+            <div class={styles.message}>
                 {props.notification.message}
             </div>
-            <span>
+            <span class={styles.time}>
                 {getRelativeTime(props.notification.createdAt)}
             </span>
             <Show when={props.notification.actionUrl}>
-                <Link to={props.notification.actionUrl!} />
+                <Link
+                    to={props.notification.actionUrl!}
+                    onClick={markRead}
+                />
             </Show>
+            <button
+                onClick={e => {
+                    e.preventDefault();
+                    markRead()
+                }}
+            >
+                <Show
+                    when={!props.notification.readAt}
+                    fallback={<MailOpenIcon />}
+                >
+                    <MailIcon />
+                </Show>
+            </button>
         </div>
     )
 }
