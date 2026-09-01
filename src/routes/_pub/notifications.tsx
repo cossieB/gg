@@ -1,6 +1,5 @@
 import { ClientOnly, createFileRoute, redirect } from '@tanstack/solid-router'
 import { NotificationsList } from '~/features/notifications/components/NotificationsList'
-import { NotificationsProvider } from '~/features/notifications/components/NotificationsProvider'
 
 export const Route = createFileRoute('/_pub/notifications')({
     component: RouteComponent,

@@ -19,7 +19,6 @@ import { ToastProvider } from '~/components/Toast/ToastProvider'
 import z from 'zod'
 import { useToastContext } from '~/hooks/useToastContext'
 import { getCurrentUser } from '~/serverFn/auth'
-import { NotificationsProvider } from '~/features/notifications/components/NotificationsProvider'
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient
@@ -91,11 +90,11 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
     return (
         <ToastProvider>
-            <NotificationsProvider>
+            
             <RootDocument>
                 <Outlet />
             </RootDocument>
-            </NotificationsProvider>
+            
         </ToastProvider>
     )
 }

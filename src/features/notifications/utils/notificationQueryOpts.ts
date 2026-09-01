@@ -1,0 +1,10 @@
+import { queryOptions } from "@tanstack/solid-query";
+import { getNotifications } from "~/serverFn/notifications";
+
+export function notificationQueryOpts() {
+    return queryOptions({
+        queryKey: ["notifications"],
+        queryFn: () => getNotifications(),
+        
+    })
+}

@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/solid-router'
 import { notificationsService } from '~/integrations/notificationService'
 import { getCurrentUser } from '~/serverFn/auth'
-import { redis } from '~/utils/redis'
 
 export const Route = createFileRoute('/api/notifications')({
     server: {
@@ -9,7 +8,6 @@ export const Route = createFileRoute('/api/notifications')({
             GET: async () => {
                 const user = await getCurrentUser();
                 if (!user) return new Response(null, { status: 401 });
-                await notificationsService.setup(user.id)
                 const encoder = new TextEncoder()
                 let intervalId: NodeJS.Timeout
                 const stream = new ReadableStream({
@@ -18,14 +16,13 @@ export const Route = createFileRoute('/api/notifications')({
                         intervalId = setInterval(() => {
                             controller.enqueue(encoder.encode(":\n\n"))
                         }, 30000)
-                        for await (const msg of notificationsService.listenForNotifications(user.id)) {
-                            controller.enqueue(encoder.encode(`data: ${JSON.stringify(msg.message)}\n\n`))
-                            await redis.xAck(`notifications:user:${user.id}`, `group:user:${user.id}`, msg.id)
-                        }
+                        notificationsService.subscribe(user.id, () => {
+                            controller.enqueue(encoder.encode("data: newNotification\n\n"))
+                        })                        
                     },
                     async cancel() {
                         clearInterval(intervalId);
-                        notificationsService.close()
+                        notificationsService.unsubscribe(user.id)
                     }
                 })
 

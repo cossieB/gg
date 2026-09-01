@@ -5,6 +5,7 @@ import { db } from "~/drizzle/db";
 import { emailService } from "~/integrations/emailService";
 import { redis } from "~/utils/redis";
 import * as schema from "~/drizzle/schema/index"
+import { tanstackStartCookies } from "better-auth/tanstack-start/solid";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -78,13 +79,16 @@ export const auth = betterAuth({
             maxAge: 600
         }
     },
-    plugins: [username({
-        minUsernameLength: 3,
-        maxUsernameLength: 15,
-        usernameValidator(username) {
-            return /^[a-zA-Z]\w{2,14}$/.test(username)
-        },
-    })],
+    plugins: [
+        username({
+            minUsernameLength: 3,
+            maxUsernameLength: 15,
+            usernameValidator(username) {
+                return /^[a-zA-Z]\w{2,14}$/.test(username)
+            },
+        }),
+        tanstackStartCookies()
+    ],
     advanced: {
         cookiePrefix: "spectre",
         database: {

@@ -1,23 +1,20 @@
-import { useNotificationContext } from "~/features/notifications/hooks/useNotificationContext";
-import { For } from "solid-js";
-import { MessageCircleIcon, ThumbsUpIcon, UsersIcon } from "lucide-solid";
+import { useNotifications } from "~/features/notifications/hooks/useNotificationContext";
+import { For, Show } from "solid-js";
+import { AtSignIcon, MessageCircleIcon, SettingsIcon, ThumbsUpIcon, UserPlusIcon } from "lucide-solid";
 import { Dynamic } from "solid-js/web";
 import { getRelativeTime } from "~/lib/getRelativeTime";
 import styles from "./Notifications.module.css"
-import { useLocalStorage } from "~/hooks/useLocalStorage";
-import { NotificationsSchema, UserNotification } from "../utils/NotificationsSchema";
 import { Link } from "@tanstack/solid-router";
+import { Notification } from "~/drizzle/models";
+import { authClient } from "~/auth/authClient";
 
 export function NotificationsList() {
-    const { notifications } = useNotificationContext()
-    const {getItem} = useLocalStorage("notifications", NotificationsSchema.array())
-    const oldNotifications = getItem() ?? []
+    const session = authClient.useSession()
+    const notifications = useNotifications()
+
     return (
         <div class={styles.notifList}>
-            <For each={notifications().toReversed()}>
-                {notification => <Notif notification={notification} />}
-            </For>
-            <For each={oldNotifications} >
+            <For each={notifications.data}>
                 {notification => <Notif notification={notification} />}
             </For>
         </div>
@@ -27,19 +24,24 @@ export function NotificationsList() {
 const icons = {
     LIKE: ThumbsUpIcon,
     REPLY: MessageCircleIcon,
-    FOLLOW: UsersIcon
+    MENTION: AtSignIcon,
+    FOLLOW: UserPlusIcon,
+    SYSTEM: SettingsIcon
 }
-function Notif(props: { notification: UserNotification }) {
+
+function Notif(props: { notification: Notification }) {
     return (
         <div class={styles.notification}>
-            <Dynamic component={icons[props.notification.type]} />
+            <Dynamic component={icons[props.notification.type ?? "MENTION"]} />
             <div>
                 {props.notification.message}
             </div>
             <span>
-                {getRelativeTime(new Date(props.notification.date))}
+                {getRelativeTime(props.notification.createdAt)}
             </span>
-            <Link to={props.notification.link} />
+            <Show when={props.notification.actionUrl}>
+                <Link to={props.notification.actionUrl!} />
+            </Show>
         </div>
     )
 }

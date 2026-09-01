@@ -1,8 +1,17 @@
-import { useContext } from "solid-js";
-import { NotificationsContext } from "~/features/notifications/components/NotificationsContext";
+import { useQuery } from "@tanstack/solid-query";
+import { authClient } from "~/auth/authClient";
+import { getNotifications } from "~/serverFn/notifications";
 
-export function useNotificationContext() {
-    const ctx = useContext(NotificationsContext)
-    if (!ctx) throw new Error("Component should be a descendent of NotificationsProvider")
-    return ctx
+export function useNotifications() {
+    const session = authClient.useSession()
+
+    const notifications = useQuery(() => ({
+        queryKey: ["notifications"],
+        queryFn: () => getNotifications(),
+        enabled: !!session().data?.user.id,
+        initialData: [],
+        staleTime: 0,
+    }))
+
+    return notifications
 }

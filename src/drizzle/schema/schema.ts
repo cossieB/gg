@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, jsonb, check, uuid, foreignKey, date, unique, customType, index } from "drizzle-orm/pg-core";
+import { timestamp, integer, pgTable, text, varchar, primaryKey, pgEnum, jsonb, check, uuid, foreignKey, date, unique, customType, index, boolean } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
 export const developers = pgTable("developers", {
@@ -104,11 +104,11 @@ export const posts = pgTable('posts', {
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     editedOn: timestamp("edited_on", { withTimezone: true }).notNull().$onUpdateFn(() => new Date()),
     views: integer("views").notNull().default(0),
-    link: text("link"),    
+    link: text("link"),
     searchVector: customType({ dataType: () => 'tsvector' })('search_vector').generatedAlwaysAs(sql`(setweight(to_tsvector('english'::regconfig, (COALESCE(title, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(text, ''::character varying))::text), 'B'::"char"))`),
 }, table => [
     index().using("gin", table.searchVector),
-    // index().on(table.userId)
+    index().on(table.userId)
 ])
 
 export const comments = pgTable("comments", {
@@ -167,9 +167,38 @@ export const postTags = pgTable("post_tags", {
 ])
 
 export const followerFollowee = pgTable('follower_followee', {
-    followerId: uuid("follower_id").notNull().references(() => users.id),
-    followeeId: uuid("followee_id").notNull().references(() => users.id),
+    followerId: uuid("follower_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    followeeId: uuid("followee_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     dateFollowed: timestamp('date_followed', { withTimezone: true }).notNull().defaultNow(),
 }, table => [
     primaryKey({ columns: [table.followerId, table.followeeId] })
 ])
+
+export const notifications = pgTable("notifications", {
+    notificationId: integer("notification_id").primaryKey().generatedAlwaysAsIdentity(),
+    recipientId: uuid("recipient_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    sourceUserId: uuid("source_user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    readAt: timestamp('read_at', { withTimezone: true }),
+    actionUrl: text("action_url"),
+    type: varchar("type", {length: 30}).$type<"LIKE" | "REPLY" | "MENTION" | "FOLLOW" | "SYSTEM">(),
+    title: text(),
+    message: text(),
+    entityType: varchar("entity_type", {length: 50}),
+    entityId: integer("entity_id")
+}, table => [
+    index().on(table.recipientId)
+])
+
+export const reviews = pgTable("reviews", {
+    reviewId: integer("review_id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    gameId: integer("game_id").notNull().references(() => games.gameId, { onDelete: "cascade" }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    editAt: timestamp('edited_at', { withTimezone: true }),
+    score: integer("score").notNull(),
+    text: text("text").notNull().default("")
+}, (table) => [
+    check("valid_review_score_check", sql`${table.score} >= 1 AND ${table.score} <= 5`),
+    unique().on(table.gameId, table.userId),
+]);

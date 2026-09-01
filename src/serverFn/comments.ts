@@ -8,6 +8,7 @@ import { rateLimiter } from "~/utils/rateLimiter";
 import { HttpStatusCode } from "~/utils/statusCodes";
 import { notificationsService } from "~/integrations/notificationService";
 import { redirect } from "@tanstack/solid-router";
+import { addNotification } from "~/repositories/notificationsRepository";
 
 export const addCommentFn = createServerFn({ method: "POST" })
     .middleware([verifiedOnlyMiddleware])
@@ -20,7 +21,7 @@ export const addCommentFn = createServerFn({ method: "POST" })
     .handler(async ({ data, context: { user } }) => {
         await rateLimiter("comment:create", user.id, 5, 60)
 
-        const result = await commentsRepository.addComment({
+        const [result] = await commentsRepository.addComment({
             userId: user.id,
             postId: data.originalPost,
             text: data.text,
@@ -28,15 +29,21 @@ export const addCommentFn = createServerFn({ method: "POST" })
         });
 
         const notifyee = data.notifyee;
-        let link = `/posts/${data.originalPost}/${result.at(0)?.commentId}`
+        let link = `/posts/${data.originalPost}/${result.commentId}`
         
-        if (notifyee && user.id !== notifyee)
-            notificationsService.addNotification(notifyee, {
-                date: new Date().toISOString(),
-                message: `${user.displayUsername} has replied to you`,
+        if (notifyee && user.id !== notifyee) {
+            await addNotification({
+                recipientId: notifyee,
+                actionUrl: link,
+                sourceUserId: user.id,
                 type: "REPLY",
-                link
+                title: `${user.displayUsername} replied to you`,
+                message: data.text.slice(50) + (data.text.length > 50 ? "..." : ""),
+                entityType: data.replyTo ? "comment" : "post",
+                entityId: data.replyTo ?? data.originalPost                
             })
+            notificationsService.publish(notifyee)
+        }
 
         return result
     })

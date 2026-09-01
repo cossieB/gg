@@ -12,6 +12,7 @@ import { getRequestIP } from "@tanstack/solid-start/server";
 import { redis } from "~/utils/redis";
 import { parseVideoUrl } from "~/components/embeds/IframeFactory";
 import { notificationsService } from "~/integrations/notificationService";
+import { addNotification } from "~/repositories/notificationsRepository";
 
 export const createPostFn = createServerFn({ method: "POST" })
     .middleware([verifiedOnlyMiddleware])
@@ -82,12 +83,17 @@ export const reactToPostFn = createServerFn({ method: "POST" })
         const res = await postRepository.reactToPost(data.postId, user.id, data.reaction)
 
         if (user.id != data.authorId && res.rows.at(0)?.reaction === "like" ) {
-            void notificationsService.addNotification(data.authorId, {
-                message: `${user.name} liked your post`,
+            await addNotification({
+                recipientId: data.authorId,
+                actionUrl: "/posts/" + data.postId,
                 type: "LIKE",
-                link: "/posts/" + data.postId,
-                date: new Date().toISOString()
+                title: "You got a like",
+                message: `${user.name} liked your post`,
+                entityType: "post",
+                entityId: data.postId,
+                sourceUserId: user.id
             })
+            void notificationsService.publish(data.authorId)
         }
     })
 

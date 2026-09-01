@@ -10,6 +10,7 @@ import { HttpStatusCode } from "~/utils/statusCodes";
 import { notificationsService } from "~/integrations/notificationService";
 import { cacheAside } from "~/utils/cacheAside";
 import { getRank } from "~/utils/getRank";
+import { addNotification } from "~/repositories/notificationsRepository";
 
 export const getLoggedInUser = createServerFn()
     .handler(async () => {
@@ -77,13 +78,17 @@ export const followUserFn = createServerFn({ method: "POST" })
         if (data == user.id) throw new AppError("You can't follow yourself", HttpStatusCode.BAD_REQUEST)
         const res = await userRepository.followUser(user.id, data)
         const success = res.rowCount === 1
-        if (success) 
-            notificationsService.addNotification(data, {
-                date: new Date().toISOString(),
-                message: `You have a new follower! ${user.displayUsername} has followed you.`,
-                link: "/users/" + user.username,
-                type: "FOLLOW"
+        if (success) {
+            await addNotification({
+                recipientId: data,
+                actionUrl: "/users/" + user.username,
+                type: "FOLLOW",
+                title: `You have a new follower!`,
+                message: `${user.displayUsername} has followed you.`,
+                sourceUserId: user.id,
             })
+            notificationsService.publish(data)
+        }
         return success
     })
 
