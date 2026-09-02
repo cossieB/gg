@@ -1,0 +1,14 @@
+services:
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6378:6379"
+
+  pg:
+    image: postgres:18-alpine
+    ports:
+      - "2345:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=user
+      - POSTGRES_DB=tests

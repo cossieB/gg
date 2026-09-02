@@ -1,5 +1,3 @@
-process.env.NODE_ENV = process.env.NODE_ENV || 'test';
-
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
@@ -17,7 +15,7 @@ dotenv.config({ path: ".env.test" });
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -27,7 +25,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'null',
+  reporter: 'list',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -85,11 +83,15 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'docker-compose up -d && sleep 2 && npx drizzle-kit push && npm run dev',
     url: 'http://localhost:1337',
     reuseExistingServer: !process.env.CI,
     env: {
-      NODE_ENV: "test"
+      NODE_ENV: "test",
+      DATABASE_URL: "postgres://user:password@localhost:2345/tests",
+      REDIS_URL: "redis://localhost:6378",
+      BETTER_AUTH_SECRET: "01234567890123456789012345678901",
+      BETTER_AUTH_URL: "http://localhost:1337"
     }
   },
 });

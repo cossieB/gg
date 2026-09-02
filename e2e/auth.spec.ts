@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
 import assert from 'node:assert';
-import { db } from '~/drizzle/db';
-import { sleep } from '~/lib/sleep';
 
 test("invalid login", async ({ page }) => {
     await page.goto('http://localhost:1337/auth/signin', {
@@ -66,15 +64,14 @@ test('signup flow', async ({ page, request }) => {
     await page.waitForURL("**/profile", {
         waitUntil: "domcontentloaded"
     });
-    
     const verificationReminder = page.getByText("Your account is unverified")
-    expect(verificationReminder).toBeVisible()
+    await expect(verificationReminder).toBeVisible()
     
     //verify
-    const emailResponse = await request.get("/api/testing/verification-token")
+    const emailResponse = await request.get("/api/testing/verification-token");
     const verificationLink = await emailResponse.text()
     assert(verificationLink)
     await page.goto(verificationLink)
     await page.waitForSelector("body[data-test-ready]")   
-    expect(verificationReminder).not.toBeVisible()
+    await expect(verificationReminder).not.toBeVisible()
 });
