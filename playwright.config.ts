@@ -83,7 +83,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'docker-compose up -d && sleep 2 && npx drizzle-kit push && npm run dev',
+    command: 'docker compose up -d && npx wait-on tcp:2345 && npx drizzle-kit push && npm run dev',
     url: 'http://localhost:1337',
     reuseExistingServer: !process.env.CI,
     env: {
