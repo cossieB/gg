@@ -1,4 +1,4 @@
-import { redis } from "~/utils/redis";
+import { redis } from "~/utils/redis.server";
 import { CacheService } from "./cacheService.interface";
 
 export class RedisService implements CacheService {

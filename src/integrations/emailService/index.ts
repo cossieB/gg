@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/solid-start"
 import { ConsoleService } from "./ConsoleService"
 import { EmailService } from "./emailService.interface"
-import { NodemailService } from "./NodeMailerService"
+import { NodemailService } from "./NodeMailerService.server"
 import assert from "node:assert"
+import '@tanstack/solid-start/server-only'
 
 export const emailService = (function (): EmailService {
     if (process.env.NODE_ENV == 'production')

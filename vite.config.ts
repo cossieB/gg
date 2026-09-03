@@ -20,7 +20,16 @@ export default defineConfig(({command}) => ({
   },
   plugins: [
     nitro(),
-    tanstackStart(),
+    tanstackStart({
+      importProtection: {
+        client: {
+          files: ["src/repositories/**", "src/drizzle/**"],
+        },
+        behavior: {
+          dev: "error"
+        }
+      }
+    }),
     viteSolid({ ssr: true }),
   ],
   build: {
@@ -29,7 +38,4 @@ export default defineConfig(({command}) => ({
   resolve: {
     tsconfigPaths: true
   },
-  test: {
-    dir: "./tests/unit"
-  }
 }))

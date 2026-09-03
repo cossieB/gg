@@ -5,18 +5,18 @@ import { getCookie, setCookie } from '@tanstack/solid-start/server'
 import { createServerFn } from '@tanstack/solid-start'
 
 const handleNavigation = createServerFn().handler(async () => {
-    const visited = getCookie("visited")
+    const visited = getCookie("visited");
     if (visited) throw redirect({ to: "/posts" })
-    setCookie("visted", "1", {
+    setCookie("visited", "1", {
         path: "/",
-        maxAge: 31556926
+        maxAge: 31556926,        
     })
     const user = await getCurrentUser()
     if (user) throw redirect({ to: "/posts" })
 })
 
 export const Route = createFileRoute('/_pub/')({
-    beforeLoad: async (ctx) => {
+    beforeLoad: async () => {
         return handleNavigation()
     },
     component: RouteComponent

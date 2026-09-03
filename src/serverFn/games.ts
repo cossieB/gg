@@ -4,7 +4,7 @@ import z from "zod";
 import { adminOnlyMiddleware } from "~/middleware/authorization";
 import { staticDataMiddleware } from "~/middleware/static";
 import * as gamesRepository from "~/repositories/gamesRepository";
-import { cacheAside } from "~/utils/cacheAside";
+import { cacheAside } from "~/utils/cacheAside.server";
 import { GameCreateSchema, GameEditSchema, GetGamesSchema } from "~/zod/games";
 
 export const getGamesFn = createServerFn()

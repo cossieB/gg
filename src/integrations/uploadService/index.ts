@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/solid-start";
 import z from "zod";
 import { verifiedOnlyMiddleware } from "~/middleware/authorization";
-import { generateSignedUrl } from "./cloudflareUploadService";
+import { generateSignedUrl } from "./cloudflareUploadService.server";
 
 export const getSignedUrls = createServerFn()
     .middleware([verifiedOnlyMiddleware])

@@ -1,6 +1,6 @@
 import { createMiddleware } from "@tanstack/solid-start"
 import { getCurrentUser } from "~/serverFn/auth"
-import { AppError } from "~/utils/AppError"
+import { AppError } from "~/utils/AppError.server"
 import { HttpStatusCode } from "~/utils/statusCodes"
 
 export const authedMiddleware = createMiddleware()

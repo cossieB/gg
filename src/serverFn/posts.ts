@@ -4,12 +4,12 @@ import z from "zod";
 import { verifiedOnlyMiddleware } from "~/middleware/authorization";
 import * as postRepository from "~/repositories/postRepository"
 import { getCurrentUser } from "./auth";
-import { AppError } from "~/utils/AppError";
+import { AppError } from "~/utils/AppError.server";
 import { variables } from "~/utils/variables";
-import { rateLimiter } from "~/utils/rateLimiter";
+import { rateLimiter } from "~/utils/rateLimiter.server";
 import { HttpStatusCode } from "~/utils/statusCodes";
 import { getRequestIP } from "@tanstack/solid-start/server";
-import { redis } from "~/utils/redis";
+import { redis } from "~/utils/redis.server";
 import { parseVideoUrl } from "~/components/embeds/IframeFactory";
 import { notificationsService } from "~/integrations/notificationService";
 import { addNotification } from "~/repositories/notificationsRepository";

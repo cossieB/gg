@@ -1,6 +1,7 @@
-import { AppError } from "./AppError"
-import { redis } from "./redis"
+import { AppError } from "./AppError.server"
+import { redis } from "./redis.server"
 import { HttpStatusCode } from "./statusCodes"
+import '@tanstack/solid-start/server-only'
 
 export async function rateLimiter(prefix: string, user: string, limit: number, window: number) {
     const key = `${prefix}:${user}`
